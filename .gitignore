@@ -1,0 +1,7 @@
+node_modules
+.pnpm-store
+.history
+dist
+.DS_STORE
+.vscode
+.idea
