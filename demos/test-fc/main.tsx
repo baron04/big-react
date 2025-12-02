@@ -8,8 +8,10 @@ import * as React from 'react';
 console.log(import.meta.hot);
 
 const jsx = (
-	<div>
+	<div key="id1">
+		hello
 		<span>big react</span>
+		<span>big react2</span>
 	</div>
 );
 
@@ -73,7 +75,5 @@ console.log(jsx);
 // 		</div>
 // 	);
 // }
-
-
 
 // createRoot(document.getElementById('root')).render(<App />);
