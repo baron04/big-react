@@ -1,0 +1,16 @@
+span {
+    word-break: break-all;
+}
+
+.priority-1 {
+    color: green;
+}
+.priority-2 {
+    color: purple;
+}
+.priority-3 {
+    color: red;
+}
+.priority-4 {
+    color: saddlebrown;
+}
