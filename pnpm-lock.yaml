@@ -100,6 +100,14 @@ importers:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@22.19.1)
 
+  packages/react:
+    dependencies:
+      shared:
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/shared: {}
+
 packages:
 
   '@babel/code-frame@7.27.1':
