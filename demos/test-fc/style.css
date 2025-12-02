@@ -1,0 +1,16 @@
+span {
+    word-break: break-all;
+}
+
+.prority-1 {
+    color: green;
+}
+.prority-2 {
+    color: purple;
+}
+.prority-3 {
+    color: red;
+}
+.prority-4 {
+    color: saddlebrown;
+}
