@@ -9,7 +9,7 @@ export function beginWork(wip: FiberNode) {
 	// 比较，返回子fiberNode
 	switch (wip.tag) {
 		case HostRoot:
-			return updateHostRootFiber(wip);
+			return updateHostRoot(wip);
 		case HostComponent:
 			return updateHostComponent(wip);
 		case HostText:
@@ -18,10 +18,11 @@ export function beginWork(wip: FiberNode) {
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
 			}
+			return null;
 	}
 }
 
-function updateHostRootFiber(wip: FiberNode) {
+function updateHostRoot(wip: FiberNode) {
 	const baseState = wip.memoizedState;
 	const updateQueue = wip.updateQueue as UpdateQueue<Element>;
 	const pending = updateQueue.shared.pending;
