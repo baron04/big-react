@@ -6,45 +6,45 @@ import { createRoot } from 'react-dom/client';
 
 console.log(import.meta.hot);
 
-const jsx = (
-	<div>
-		<span>big react</span>
-	</div>
-);
+// const jsx = (
+// 	<div>
+// 		<span>big react</span>
+// 	</div>
+// );
 
 console.log(React);
-console.log(jsx);
+// console.log(jsx);
 
-// function Child() {
-// 	const [num, setNum] = useState(100);
-// 	window.setNum = setNum;
+function Child() {
+	const [num, setNum] = useState(100);
+	window.setNum = setNum;
 
-// 	const arr =
-// 		num % 2 == 0
-// 			? [<li key="1">1</li>, <li key="2">2</li>, <li key="3">3</li>]
-// 			: [<li key="3">3</li>, <li key="2">2</li>, <li key="1">1</li>];
-// 	return (
-// 		<div>
-// 			{/* {num == 3 ? (
-// 				<div>{jsx}</div>
-// 			) : (
-// 				<span onClickCapture={() => setNum(num + 1)}>{num}</span>
-// 			)} */}
-// 			{/* <span onClick={() => setNum(num + 1)}>{num}</span> */}
+	const arr =
+		num % 2 == 0
+			? [<li key="1">1</li>, <li key="2">2</li>, <li key="3">3</li>]
+			: [<li key="3">3</li>, <li key="2">2</li>, <li key="1">1</li>];
+	return (
+		<div>
+			{/* {num == 3 ? (
+				<div>{jsx}</div>
+			) : (
+				<span onClickCapture={() => setNum(num + 1)}>{num}</span>
+			)} */}
+			{/* <span onClick={() => setNum(num + 1)}>{num}</span> */}
 
-// 			<span
-// 				onClick={() => {
-// 					setNum((num) => num + 1);
-// 					setNum((num) => num + 1);
-// 					setNum((num) => num + 1);
-// 				}}
-// 			>
-// 				{num}
-// 			</span>
-// 			<ul>{arr}</ul>
-// 		</div>
-// 	);
-// }
+			<span
+				onClick={() => {
+					setNum((num) => num + 1);
+					setNum((num) => num + 1);
+					setNum((num) => num + 1);
+				}}
+			>
+				{num}
+			</span>
+			<ul>{arr}</ul>
+		</div>
+	);
+}
 
 // const fragmentTest1 = (
 // 	<>
@@ -64,14 +64,19 @@ console.log(jsx);
 // 	</ul>
 // );
 
+function Child1() {
+	return <div>child1</div>;
+}
+
 function App() {
 	return (
 		<div>
-			<span>big react</span>
+			{/* <span>App big react</span> */}
+			<Child1 />
 			{/* <Child /> */}
 			{/* {fragmentTest2} */}
 		</div>
 	);
 }
 
-createRoot(document.getElementById('root')!).render(jsx);
+createRoot(document.getElementById('root')!).render(<App />);
