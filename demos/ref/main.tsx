@@ -19,7 +19,7 @@ function App() {
 }
 
 function Child() {
-	return <p ref={(dom) => console.warn('dom is:', dom)}>Child</p>;
+	return <p ref={(dom: Element) => console.warn('dom is:', dom)}>Child</p>;
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

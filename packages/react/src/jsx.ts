@@ -93,3 +93,4 @@ export const jsx = (type: Type, config: Props, maybeKey?: Key) => {
 };
 
 export const jsxDEV = jsx;
+export const jsxs = jsx;

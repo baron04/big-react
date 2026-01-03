@@ -1,17 +1,14 @@
 import * as React from 'react';
 // import { useState } from 'react';
-// import { createRoot } from 'react-dom/client';
-
+import { createRoot } from 'react-dom/client';
 // import ReactDOM from 'react-dom';
 // console.log(ReactDOM);
 
 console.log(import.meta.hot);
 
 const jsx = (
-	<div key="id1">
-		hello
+	<div>
 		<span>big react</span>
-		<span>big react2</span>
 	</div>
 );
 
@@ -67,13 +64,14 @@ console.log(jsx);
 // 	</ul>
 // );
 
-// function App() {
-// 	return (
-// 		<div>
-// 			<Child />
-// 			{/* {fragmentTest2} */}
-// 		</div>
-// 	);
-// }
+function App() {
+	return (
+		<div>
+			<span>big react</span>
+			{/* <Child /> */}
+			{/* {fragmentTest2} */}
+		</div>
+	);
+}
 
-// createRoot(document.getElementById('root')).render(<App />);
+createRoot(document.getElementById('root')!).render(jsx);
