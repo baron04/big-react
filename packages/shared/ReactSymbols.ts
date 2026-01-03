@@ -2,4 +2,4 @@ const supportSymbol = typeof Symbol === 'function' && Symbol.for;
 
 export const REACT_ELEMENT_TYPE = supportSymbol
 	? Symbol.for('react.element')
-	: 0xac7;
+	: 0xeac7;

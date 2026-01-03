@@ -39,6 +39,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-react": "^0.14.2",
     "prettier": "^3.3.3",
+    "react": "workspace:*",
+    "react-dom": "workspace:*",
     "rimraf": "^6.0.1",
     "rollup": "^4.24.0",
     "rollup-plugin-generate-package-json": "^3.2.0",

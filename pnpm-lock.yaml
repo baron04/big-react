@@ -89,10 +89,16 @@ importers:
         version: 29.7.0
       jest-react:
         specifier: ^0.14.2
-        version: 0.14.2(jest@29.7.0(@types/node@22.19.1))(react-test-renderer@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.14.2(jest@29.7.0(@types/node@22.19.1))(react-test-renderer@18.3.1(react@packages+react))(react@packages+react)
       prettier:
         specifier: ^3.3.3
         version: 3.7.3
+      react:
+        specifier: workspace:*
+        version: link:packages/react
+      react-dom:
+        specifier: workspace:*
+        version: link:packages/react-dom
       rimraf:
         specifier: ^6.0.1
         version: 6.1.2
@@ -3161,10 +3167,6 @@ packages:
     resolution: {integrity: sha512-KkAgygexHUkQqtvvx/otwxtuFu5cVjfzTCtjXLH9boS19/Nbtg84zS7wIQn39G8IlrhThBpQsMKkq5ZHZIYFXA==}
     peerDependencies:
       react: ^18.3.1
-
-  react@18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
-    engines: {node: '>=0.10.0'}
 
   read-pkg@5.2.0:
     resolution: {integrity: sha512-Ug69mNOpfvKDAc2Q8DRpMjjzdtrnv9HcSMX+4VsZxD1aZ6ZzrIE7rlzXBtWTyhULSMKg076AW6WR5iZpD0JiOg==}
@@ -6754,11 +6756,11 @@ snapshots:
     optionalDependencies:
       jest-resolve: 29.7.0
 
-  jest-react@0.14.2(jest@29.7.0(@types/node@22.19.1))(react-test-renderer@18.3.1(react@18.3.1))(react@18.3.1):
+  jest-react@0.14.2(jest@29.7.0(@types/node@22.19.1))(react-test-renderer@18.3.1(react@packages+react))(react@packages+react):
     dependencies:
       jest: 29.7.0(@types/node@22.19.1)
-      react: 18.3.1
-      react-test-renderer: 18.3.1(react@18.3.1)
+      react: link:packages/react
+      react-test-renderer: 18.3.1(react@packages+react)
 
   jest-regex-util@29.6.3: {}
 
@@ -7296,22 +7298,18 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-shallow-renderer@16.15.0(react@18.3.1):
+  react-shallow-renderer@16.15.0(react@packages+react):
     dependencies:
       object-assign: 4.1.1
-      react: 18.3.1
+      react: link:packages/react
       react-is: 18.3.1
 
-  react-test-renderer@18.3.1(react@18.3.1):
+  react-test-renderer@18.3.1(react@packages+react):
     dependencies:
-      react: 18.3.1
+      react: link:packages/react
       react-is: 18.3.1
-      react-shallow-renderer: 16.15.0(react@18.3.1)
+      react-shallow-renderer: 16.15.0(react@packages+react)
       scheduler: 0.23.2
-
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
 
   read-pkg@5.2.0:
     dependencies:

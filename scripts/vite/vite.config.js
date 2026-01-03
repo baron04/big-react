@@ -4,8 +4,6 @@ import replace from '@rollup/plugin-replace';
 import { resolvePkgPath } from '../rollup/utils';
 import path from 'path';
 
-console.log(resolvePkgPath('react'))
-
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [
@@ -21,22 +19,22 @@ export default defineConfig({
 				find: 'react',
 				replacement: resolvePkgPath('react')
 			},
-			// {
-			// 	find: 'react-dom',
-			// 	replacement: resolvePkgPath('react-dom')
-			// },
+			{
+				find: 'react-dom',
+				replacement: resolvePkgPath('react-dom')
+			},
 			// {
 			// 	find: 'react-noop-renderer',
 			// 	replacement: resolvePkgPath('react-noop-renderer')
 			// },
-			// {
-			// 	find: 'hostConfig',
-			// 	replacement: path.resolve(
-			// 		// resolvePkgPath('react-noop-renderer'),
-			// 		resolvePkgPath('react-dom'),
-			// 		'./src/hostConfig.ts'
-			// 	)
-			// }
+			{
+				find: 'hostConfig',
+				replacement: path.resolve(
+					// resolvePkgPath('react-noop-renderer'),
+					resolvePkgPath('react-dom'),
+					'./src/hostConfig.ts'
+				)
+			}
 		]
 	}
 });

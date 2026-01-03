@@ -14,3 +14,11 @@ export interface ReactElement {
 }
 
 export type Action<State> = State | ((prevState: State) => State);
+
+export type ReactNode =
+	| ReactElement
+	| string
+	| number
+	| boolean
+	| null
+	| undefined;

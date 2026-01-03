@@ -65,3 +65,4 @@ export const jsx = function (type: Type, config: any, maybeKey: any) {
 };
 
 export const jsxDEV = jsx;
+export const jsxs = jsx;
