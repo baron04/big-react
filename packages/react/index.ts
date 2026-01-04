@@ -1,3 +1,4 @@
+import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
 import currentDispatcher, {
 	Dispatcher,
 	resolveDispatcher
@@ -18,3 +19,11 @@ export const useState: Dispatcher['useState'] = (initialState) => {
 export const __SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
 	currentDispatcher
 };
+
+export function isValidElement(object: any) {
+	return (
+		typeof object === 'object' &&
+		object !== null &&
+		object.$$typeof === REACT_ELEMENT_TYPE
+	);
+}

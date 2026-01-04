@@ -3,7 +3,6 @@
   "version": "1.0.0",
 	"description": "从零实现 React v18 的核心功能",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "build:dev": "rimraf dist && rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
     "lint-staged": "npx lint-staged",
