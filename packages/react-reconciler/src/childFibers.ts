@@ -1,15 +1,58 @@
 import { ReactElement } from 'shared/ReactTypes';
-import { createFiberFromElement, FiberNode } from './fiber';
+import {
+	createFiberFromElement,
+	createWorkInProgress,
+	FiberNode
+} from './fiber';
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
 import { HostText } from './workTags';
-import { Placement } from './fiberFlags';
+import { ChildDeletion, Placement } from './fiberFlags';
 
 function childReconciler(shouldTrackEffects: boolean) {
+	function deleteChild(returnFiber: FiberNode, childToDelete: FiberNode) {
+		if (!shouldTrackEffects) {
+			return;
+		}
+		const deletions = returnFiber.deletions;
+		if (deletions === null) {
+			returnFiber.deletions = [childToDelete];
+			returnFiber.flags |= ChildDeletion;
+		} else {
+			deletions.push(childToDelete);
+		}
+	}
+
 	function reconcileSingleElement(
 		returnFiber: FiberNode,
 		currentFiber: FiberNode | null,
 		element: ReactElement
-	) {
+	): FiberNode {
+		const key = element.key;
+		work: if (currentFiber !== null) {
+			// update
+			if (currentFiber.key === key) {
+				// key 相同
+				if (element.$$typeof === REACT_ELEMENT_TYPE) {
+					if (currentFiber.type === element.type) {
+						// type 相同
+						const existing = useFiber(currentFiber, element.props);
+						existing.return = returnFiber;
+						return existing;
+					}
+					// 删掉旧的
+					deleteChild(returnFiber, currentFiber);
+					break work;
+				} else {
+					if (__DEV__) {
+						console.warn('还未实现的React类型', element);
+					}
+					break work;
+				}
+			} else {
+				// 删掉旧的
+				deleteChild(returnFiber, currentFiber);
+			}
+		}
 		// 根据element创建fiber
 		const fiber = createFiberFromElement(element);
 		fiber.return = returnFiber;
@@ -21,6 +64,16 @@ function childReconciler(shouldTrackEffects: boolean) {
 		currentFiber: FiberNode | null,
 		content: string | number
 	) {
+		if (currentFiber !== null) {
+			// update
+			if (currentFiber.tag === HostText) {
+				// 类型没变，可以复用
+				const existing = useFiber(currentFiber, { content });
+				existing.return = returnFiber;
+				return existing;
+			}
+			deleteChild(returnFiber, currentFiber);
+		}
 		const fiber = new FiberNode(HostText, { content }, null);
 		fiber.return = returnFiber;
 		return fiber;
@@ -60,11 +113,23 @@ function childReconciler(shouldTrackEffects: boolean) {
 			);
 		}
 
+		// 兜底删除
+		if (currentFiber !== null) {
+			deleteChild(returnFiber, currentFiber);
+		}
+
 		if (__DEV__) {
 			console.warn('未实现的reconcile类型', newChild);
 		}
 		return null;
 	};
+}
+
+function useFiber(fiber: FiberNode, pendingProps: any): FiberNode {
+	const clone = createWorkInProgress(fiber, pendingProps);
+	clone.index = 0;
+	clone.sibling = null;
+	return clone;
 }
 
 export const reconcileChildFibers = childReconciler(true);
