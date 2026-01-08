@@ -59,6 +59,7 @@ function childReconciler(shouldTrackEffects: boolean) {
 					}
 					// key相同，type不同，删掉所有旧的
 					deleteRemainingChildren(returnFiber, currentFiber);
+					break;
 				} else {
 					if (__DEV__) {
 						console.warn('还未实现的React类型', element);
@@ -167,6 +168,7 @@ function childReconciler(shouldTrackEffects: boolean) {
 				newFiber.flags |= Placement;
 			}
 		}
+
 		// 4. 将 Map 中剩下的标记为删除
 		existingChildren.forEach((fiber) => {
 			deleteChild(returnFiber, fiber);
@@ -247,9 +249,9 @@ function childReconciler(shouldTrackEffects: boolean) {
 			);
 		}
 
-		// 兜底删除
 		if (currentFiber !== null) {
-			deleteChild(returnFiber, currentFiber);
+			// 兜底删除
+			deleteRemainingChildren(returnFiber, currentFiber);
 		}
 
 		if (__DEV__) {
