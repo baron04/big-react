@@ -1,9 +1,30 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-function App() {
-	const [num, setNum] = useState(1);
+function App1() {
+	return (
+		<>
+			<div>1</div>
+			<div>2</div>
+		</>
+	);
+}
+
+function App2() {
+	return (
+		<ul>
+			<>
+				<li>1</li>
+				<li>2</li>
+			</>
+			<li>3</li>
+			<li>4</li>
+		</ul>
+	);
+}
+
+function App3() {
+	const [num, setNum] = React.useState(1);
 
 	const arr =
 		num % 2 === 0
@@ -16,9 +37,11 @@ function App() {
 				setNum(num + 1);
 			}}
 		>
+			<li>A</li>
+			<li>B</li>
 			{arr}
 		</ul>
 	);
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+createRoot(document.getElementById('root')!).render(<App3 />);

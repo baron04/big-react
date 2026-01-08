@@ -1,9 +1,9 @@
-import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
+import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
 import type { Key, Props, ReactElement, Ref, Type } from 'shared/ReactTypes';
 
 const ReactElement = function (
 	type: Type,
-	key: Key,
+	key: Key | null,
 	ref: Ref,
 	props: Props
 ): ReactElement {
@@ -94,3 +94,5 @@ export const jsx = (type: Type, config: Props, maybeKey?: Key) => {
 
 export const jsxDEV = jsx;
 export const jsxs = jsx;
+
+export const Fragment = REACT_FRAGMENT_TYPE;
