@@ -2,6 +2,7 @@ import {
 	appendChildToContainer,
 	commitUpdate,
 	Container,
+	insertChildToContainer,
 	Instance,
 	removeChild
 } from 'hostConfig';
@@ -247,7 +248,7 @@ function insertOrAppendPlacementNodeIntoContainer(
 	// fiber host
 	if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
 		if (before) {
-			insertInstanceToContainer(finishedWork.stateNode, hostParent, before);
+			insertChildToContainer(finishedWork.stateNode, hostParent, before);
 		} else {
 			appendChildToContainer(hostParent, finishedWork.stateNode);
 		}

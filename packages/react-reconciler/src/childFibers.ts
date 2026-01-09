@@ -193,11 +193,10 @@ function childReconciler(shouldTrackEffects: boolean) {
 		index: number,
 		element: any
 	): FiberNode | null {
-		const keyToUse = element.key !== null ? element.key : index;
+		const keyToUse = getElementKeyToUse(element, index);
 		const before = existingChildren.get(keyToUse) || null;
-
-		// HostText: 文本节点使用 index 作为 key
 		if (typeof element === 'string' || typeof element === 'number') {
+			// HostText
 			if (before) {
 				if (before.tag === HostText) {
 					existingChildren.delete(keyToUse);
@@ -229,16 +228,16 @@ function childReconciler(shouldTrackEffects: boolean) {
 					return createFiberFromElement(element);
 				}
 			}
-			// TODO数组类型
-			if (Array.isArray(element)) {
-				return updateFragment(
-					returnFiber,
-					before,
-					element,
-					keyToUse,
-					existingChildren
-				);
-			}
+		}
+
+		if (Array.isArray(element)) {
+			return updateFragment(
+				returnFiber,
+				before,
+				element,
+				keyToUse,
+				existingChildren
+			);
 		}
 
 		return null;
@@ -302,6 +301,17 @@ function useFiber(fiber: FiberNode, pendingProps: Props): FiberNode {
 	clone.index = 0;
 	clone.sibling = null;
 	return clone;
+}
+
+function getElementKeyToUse(element: any, index: number): Key {
+	if (
+		Array.isArray(element) ||
+		typeof element === 'string' ||
+		typeof element === 'number'
+	) {
+		return index;
+	}
+	return element.key !== null ? element.key : index;
 }
 
 function updateFragment(

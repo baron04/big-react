@@ -97,14 +97,15 @@ function appendAllChildren(parent: Container, wip: FiberNode) {
 }
 
 function bubbleProperties(wip: FiberNode) {
-	let subtreeFlag = NoFlags;
+	let subtreeFlags = NoFlags;
 	let child = wip.child;
+
 	while (child !== null) {
-		subtreeFlag |= child.subtreeFlags;
-		subtreeFlag |= child.flags;
+		subtreeFlags |= child.subtreeFlags;
+		subtreeFlags |= child.flags;
 
 		child.return = wip;
 		child = child.sibling;
 	}
-	wip.subtreeFlags |= subtreeFlag;
+	wip.subtreeFlags |= subtreeFlags;
 }
