@@ -1,10 +1,12 @@
+import { scheduleMicroTask } from 'hostConfig';
 import { beginWork } from './beginWork';
 import { commitMutationEffects } from './commitWork';
 import { completeWork } from './completeWork';
 import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber';
 import { MutationMask, NoFlags } from './fiberFlags';
-import { Lane, mergeLane } from './fiberLanes';
+import { Lane, Lanes, mergeLane, NoLane, SyncLane } from './fiberLanes';
 import { HostRoot } from './workTags';
+import { flushSyncCallbacks, scheduleSyncCallback } from './syncTaskQueue';
 
 let workInProgress: FiberNode | null = null;
 
@@ -16,7 +18,25 @@ export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
 	// TODO 调度功能
 	const root = markUpdateFromFiberToRoot(fiber);
 	markRootUpdated(root, lane);
-	renderRoot(root);
+	ensureRootIsScheduled(root);
+}
+
+// schedule 阶段入口
+function ensureRootIsScheduled(root: FiberRootNode) {
+	const updateLane = getHighestPriorityLane(root.pendingLanes);
+	if (updateLane === NoLane) {
+		return;
+	}
+	if (updateLane === SyncLane) {
+		// 同步优先级 用微任务调度
+		if (__DEV__) {
+			console.log('在微任务中调度，优先级：', updateLane);
+		}
+		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root, updateLane));
+		scheduleMicroTask(flushSyncCallbacks);
+	} else {
+		// 其它优先级 用宏任务调度
+	}
 }
 
 function markRootUpdated(root: FiberRootNode, lane: Lane) {
@@ -36,7 +56,14 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
 	return null;
 }
 
-function renderRoot(root: FiberRootNode) {
+function performSyncWorkOnRoot(root: FiberRootNode, lane: Lane) {
+	const nextLane = getHighestPriorityLane(root.pendingLanes);
+	if (nextLane !== SyncLane) {
+		// 其它比SyncLane低的优先级
+		// NoLane
+		ensureRootIsScheduled(root);
+		return;
+	}
 	// 初始化
 	prepareFreshStack(root);
 	do {
@@ -120,4 +147,8 @@ function completeUnitOfWork(fiber: FiberNode) {
 		node = node.return;
 		workInProgress = node;
 	} while (node !== null);
+}
+
+export function getHighestPriorityLane(lanes: Lanes): Lane {
+	return lanes & -lanes;
 }
