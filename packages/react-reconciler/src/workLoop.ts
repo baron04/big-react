@@ -4,14 +4,23 @@ import { commitMutationEffects } from './commitWork';
 import { completeWork } from './completeWork';
 import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber';
 import { MutationMask, NoFlags } from './fiberFlags';
-import { Lane, Lanes, mergeLane, NoLane, SyncLane } from './fiberLanes';
+import {
+	getHighestPriorityLane,
+	Lane,
+	markRootFinished,
+	mergeLanes,
+	NoLane,
+	SyncLane
+} from './fiberLanes';
 import { HostRoot } from './workTags';
 import { flushSyncCallbacks, scheduleSyncCallback } from './syncTaskQueue';
 
 let workInProgress: FiberNode | null = null;
+let wipRootRenderLane: Lane = NoLane;
 
-function prepareFreshStack(root: FiberRootNode) {
+function prepareFreshStack(root: FiberRootNode, lane: Lane) {
 	workInProgress = createWorkInProgress(root.current, {});
+	wipRootRenderLane = lane;
 }
 
 export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
@@ -40,7 +49,7 @@ function ensureRootIsScheduled(root: FiberRootNode) {
 }
 
 function markRootUpdated(root: FiberRootNode, lane: Lane) {
-	root.pendingLanes = mergeLane(root.pendingLanes, lane);
+	root.pendingLanes = mergeLanes(root.pendingLanes, lane);
 }
 
 function markUpdateFromFiberToRoot(fiber: FiberNode) {
@@ -64,8 +73,14 @@ function performSyncWorkOnRoot(root: FiberRootNode, lane: Lane) {
 		ensureRootIsScheduled(root);
 		return;
 	}
+
+	if (__DEV__) {
+		console.warn('render阶段开始');
+	}
+
 	// 初始化
-	prepareFreshStack(root);
+	prepareFreshStack(root, lane);
+
 	do {
 		try {
 			workLoop();
@@ -80,6 +95,8 @@ function performSyncWorkOnRoot(root: FiberRootNode, lane: Lane) {
 
 	const finishedWork = root.current.alternate;
 	root.finishedWork = finishedWork;
+	root.finishedLane = lane;
+	wipRootRenderLane = NoLane;
 
 	// wip fiberNode树 树中flags
 	commitRoot(root);
@@ -96,8 +113,15 @@ function commitRoot(root: FiberRootNode) {
 		console.warn('commit阶段开始', finishedWork);
 	}
 
+	const lane = root.finishedLane;
+	if (lane === NoLane && __DEV__) {
+		console.error('commit阶段finishedLane不应该是NoLane');
+	}
+
 	// 重置
 	root.finishedWork = null;
+	root.finishedLane = NoLane;
+	markRootFinished(root, lane);
 
 	// 判断是否存在3个子阶段需要执行的操作
 	// root flags root subtreeflags
@@ -125,7 +149,7 @@ function workLoop() {
 }
 
 function performUnitOfWork(fiber: FiberNode) {
-	const next = beginWork(fiber);
+	const next = beginWork(fiber, wipRootRenderLane);
 	fiber.memoizedProps = fiber.pendingProps;
 	if (next === null) {
 		completeUnitOfWork(fiber);
@@ -147,8 +171,4 @@ function completeUnitOfWork(fiber: FiberNode) {
 		node = node.return;
 		workInProgress = node;
 	} while (node !== null);
-}
-
-export function getHighestPriorityLane(lanes: Lanes): Lane {
-	return lanes & -lanes;
 }
