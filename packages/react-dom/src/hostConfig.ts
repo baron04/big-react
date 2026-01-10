@@ -21,7 +21,7 @@ export const appendInitialChild = (
 	return parent.appendChild(child);
 };
 
-export const createTextInstance = (content: string) => {
+export const createTextInstance = (content: string): TextInstance => {
 	return document.createTextNode(content);
 };
 
@@ -49,8 +49,8 @@ export function commitTextUpdate(
 }
 
 export function removeChild(
-	child: Instance | TextInstance,
-	container: Container
+	container: Container,
+	child: Instance | TextInstance
 ) {
 	return container.removeChild(child);
 }
@@ -60,7 +60,7 @@ export function insertChildToContainer(
 	container: Container,
 	before: Instance
 ) {
-	container.insertBefore(child, before);
+	return container.insertBefore(child, before);
 }
 
 export const scheduleMicroTask =
