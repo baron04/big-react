@@ -6,3 +6,7 @@ export const Update = 0b0000010;
 export const ChildDeletion = 0b0000100;
 
 export const MutationMask = Placement | Update | ChildDeletion;
+
+export const PassiveEffect = 0b001000;
+
+export const PassiveMask = PassiveEffect | ChildDeletion;

@@ -1,7 +1,12 @@
+import {
+	EffectCallback,
+	DependencyList
+} from 'react-reconciler/src/fiberHooks';
 import { Action } from 'shared/ReactTypes';
 
 export interface Dispatcher {
 	useState: <T>(initialState: (() => T) | T) => [T, Dispatch<T>];
+	useEffect: (create: EffectCallback, deps?: DependencyList) => void;
 }
 
 export type Dispatch<State> = (action: Action<State>) => void;
