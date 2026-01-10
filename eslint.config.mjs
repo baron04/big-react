@@ -20,7 +20,8 @@ export default [
 			'@typescript-eslint/no-require-imports': 'off',
 			'@typescript-eslint/no-unused-vars': 'warn',
 			'@typescript-eslint/ban-ts-comment': 'warn',
-			'no-constant-condition': 'warn'
+			'no-constant-condition': 'warn',
+			eqeqeq: 'warn'
 		}
 	}
 ];

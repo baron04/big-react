@@ -1,23 +1,37 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
-function App() {
-	const [num, setNum] = React.useState(1);
+function Child() {
+	useEffect(() => {
+		console.log('Child mount');
+		return () => console.log('Child unmount');
+	}, []);
+	return 'I am child';
+}
 
-	console.log('render', num);
+function App() {
+	const [num, setNum] = React.useState(0);
+
+	useEffect(() => {
+		console.log('App mount');
+	}, []);
+
+	useEffect(() => {
+		console.log('num change', num);
+		return () => console.log('num change destroy', num);
+	}, [num]);
 
 	return (
 		<div>
-			{num}
 			<button
 				onClick={() => {
-					setNum((num) => num + 1);
-					setNum((num) => num + 1);
 					setNum((num) => num + 1);
 				}}
 			>
 				add
 			</button>
+			{num === 0 ? <Child /> : 'noop'}
 		</div>
 	);
 }
