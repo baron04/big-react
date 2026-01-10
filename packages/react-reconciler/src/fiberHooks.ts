@@ -48,6 +48,8 @@ export function renderWithHooks(wip: FiberNode, lane: Lane) {
 	currentlyRenderingFiber = wip;
 	// 重置 hooks的链表
 	wip.memoizedState = null;
+	// 重置 effects 的链表
+	wip.updateQueue = null;
 	renderLane = lane;
 
 	const current = wip.alternate;
@@ -77,7 +79,8 @@ const HooksDispatcherOnMount: Dispatcher = {
 };
 
 const HooksDispatcherOnUpdate: Dispatcher = {
-	useState: updateState
+	useState: updateState,
+	useEffect: updateEffect
 };
 
 function mountState<State>(
@@ -254,4 +257,47 @@ function createFCUpdateQueue<State>() {
 	const updateQueue = createUpdateQueue<State>() as FCUpdateQueue<State>;
 	updateQueue.lastEffect = null;
 	return updateQueue;
+}
+
+function updateEffect(create: EffectCallback, nextDeps?: DependencyList) {
+	const hook = updateWorkInProgressHook();
+	let destroy: EffectDestroy;
+
+	if (currentHook !== null) {
+		const prevEffect = currentHook.memoizedState as Effect;
+		destroy = prevEffect.destroy;
+
+		if (nextDeps !== undefined) {
+			// 浅比较依赖
+			const prevDeps = prevEffect.deps;
+			if (areHookInputsEqual(prevDeps, nextDeps)) {
+				hook.memoizedState = pushEffect(Passive, create, destroy, nextDeps);
+				return;
+			}
+		}
+		// 浅比较 不相等
+		currentlyRenderingFiber!.flags |= PassiveEffect;
+		hook.memoizedState = pushEffect(
+			Passive | HookHasEffect,
+			create,
+			destroy,
+			nextDeps
+		);
+	}
+}
+
+function areHookInputsEqual(
+	prevDeps?: DependencyList,
+	nextDeps?: DependencyList
+) {
+	if (prevDeps === undefined || nextDeps === undefined) {
+		return false;
+	}
+	for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+		if (Object.is(prevDeps[i], nextDeps[i])) {
+			continue;
+		}
+		return false;
+	}
+	return true;
 }
