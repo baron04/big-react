@@ -84,7 +84,7 @@ function schedule() {
 	curCallback = scheduleCallback(curPriority, perform.bind(null, curWork));
 }
 
-function perform(work: Work, didTimeout?: boolean) {
+function perform(work: Work, didTimeout?: boolean): any {
 	/**
 	 * 1. work.priority
 	 * 2. 饥饿问题
@@ -115,17 +115,17 @@ function perform(work: Work, didTimeout?: boolean) {
 	}
 }
 
-function insertSpan(content) {
+function insertSpan(content: string) {
 	const span = document.createElement('span');
 	span.innerText = content;
-	span.className = `prority-${content}`;
-	doSomeBusyWork(10000000);
+	span.className = `priority-${content}`;
+	doSomeBusyWork();
 	root?.appendChild(span);
 }
 
-function doSomeBusyWork(len: number) {
-	let result = 0;
-	while (len--) {
-		result += len;
+function doSomeBusyWork() {
+	const start = performance.now();
+	while (performance.now() - start < 10) {
+		// 空转 10ms，模拟复杂计算
 	}
 }

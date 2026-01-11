@@ -3,14 +3,17 @@ span {
 }
 
 .prority-1 {
-    color: green;
-}
-.prority-2 {
-    color: purple;
-}
-.prority-3 {
     color: red;
 }
+
+.prority-2 {
+    color: orange;
+}
+
+.prority-3 {
+    color: purple;
+}
+
 .prority-4 {
-    color: saddlebrown;
+    color: green;
 }
