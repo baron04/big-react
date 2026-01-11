@@ -90,9 +90,9 @@ function performSyncWorkOnRoot(root: FiberRootNode, lane: Lane) {
 		return;
 	}
 
-	if (__DEV__) {
-		console.warn('render阶段开始');
-	}
+	// if (__DEV__) {
+	// 	console.warn('render阶段开始');
+	// }
 
 	// 初始化
 	prepareFreshStack(root, lane);
@@ -125,9 +125,9 @@ function commitRoot(root: FiberRootNode) {
 		return;
 	}
 
-	if (__DEV__) {
-		console.warn('commit阶段开始', finishedWork);
-	}
+	// if (__DEV__) {
+	// 	console.warn('commit阶段开始', finishedWork);
+	// }
 
 	const lane = root.finishedLane;
 	if (lane === NoLane && __DEV__) {
