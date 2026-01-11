@@ -21,7 +21,7 @@ export default [
 				format: 'umd'
 			}
 		],
-		externals: [...Object.keys(peerDependencies), 'scheduler'],
+		external: [...Object.keys(peerDependencies), 'scheduler'],
 		plugins: [
 			...getBaseRollupPlugins({
 				typescript: {

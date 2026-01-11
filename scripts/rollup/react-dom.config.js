@@ -24,7 +24,7 @@ export default [
 				format: 'umd'
 			}
 		],
-		externals: [...Object.keys(peerDependencies)],
+		external: [...Object.keys(peerDependencies)],
 		plugins: [
 			...getBaseRollupPlugins(),
 			// webpack resolve alias

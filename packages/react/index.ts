@@ -5,10 +5,9 @@ import currentDispatcher, {
 } from './src/currentDispatcher';
 import { jsxDEV } from './src/jsx';
 
-export default {
-	version: '0.0.0',
-	createElement: jsxDEV
-};
+export const version = '0.0.0';
+
+export const createElement = jsxDEV;
 
 export const useState: Dispatcher['useState'] = (initialState) => {
 	const dispatcher = resolveDispatcher();
@@ -32,3 +31,11 @@ export function isValidElement(object: any) {
 		object.$$typeof === REACT_ELEMENT_TYPE
 	);
 }
+
+export default {
+	version,
+	createElement,
+	useState,
+	useEffect,
+	isValidElement
+};

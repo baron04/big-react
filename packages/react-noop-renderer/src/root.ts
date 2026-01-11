@@ -5,6 +5,7 @@ import {
 import { Container, Instance } from './hostConfig';
 import { ReactElement } from 'shared/ReactTypes';
 import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
+import * as Scheduler from 'scheduler';
 
 let idCounter = 0;
 
@@ -39,7 +40,7 @@ export function createRoot() {
 		return children;
 	}
 
-	function childToJSX(child: any): any {
+	function childToJSX(child: any) {
 		if (typeof child === 'string' || typeof child === 'number') {
 			return child;
 		}
@@ -50,7 +51,7 @@ export function createRoot() {
 			if (child.length === 1) {
 				return childToJSX(child[0]);
 			}
-			const children = child.map(childToJSX);
+			const children: any[] = child.map(childToJSX);
 
 			if (
 				children.every(
@@ -86,6 +87,7 @@ export function createRoot() {
 	}
 
 	return {
+		_Scheduler: Scheduler,
 		render(element: ReactElement) {
 			return updateContainer(element, root);
 		},
