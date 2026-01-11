@@ -1,21 +1,39 @@
-import * as React from 'react';
-import ReactNoopRenderer from 'react-noop-renderer';
-// import { createRoot } from 'react-noop-renderer';
+import './style.css';
+const button = document.createElement('button');
+button.innerText = 'Button';
+const root = document.querySelector('#root')!;
+root.appendChild(button);
 
-function Child() {
-	return 'Child';
+interface Work {
+	count: number;
 }
 
-function App() {
-	return (
-		<>
-			<div>hello world</div>
-			<Child />
-		</>
-	);
+const workList: Work[] = [];
+
+button.onclick = () => {
+	workList.unshift({
+		count: 100000
+	});
+	schedule();
+};
+
+function schedule() {
+	const currentWork = workList.pop();
+	if (currentWork) {
+		perform(currentWork);
+	}
 }
 
-const root = ReactNoopRenderer.createRoot();
-root.render(<App />);
-window.root = root;
-// root.getChildren()
+function perform(work: Work) {
+	while (work.count) {
+		work.count--;
+		insertSpan('0');
+	}
+	schedule();
+}
+
+function insertSpan(content: string) {
+	const span = document.createElement('span');
+	span.innerText = content;
+	root.append(span);
+}
