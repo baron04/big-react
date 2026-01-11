@@ -3,14 +3,17 @@ span {
 }
 
 .priority-1 {
-    color: green;
-}
-.priority-2 {
-    color: purple;
-}
-.priority-3 {
     color: red;
 }
+
+.priority-2 {
+    color: orange;
+}
+
+.priority-3 {
+    color: purple;
+}
+
 .priority-4 {
-    color: saddlebrown;
+    color: green;
 }
