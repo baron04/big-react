@@ -1,4 +1,5 @@
 import internals from 'shared/internals';
+import { unstable_runWithPriority, unstable_NormalPriority } from 'scheduler';
 import { FiberNode } from './fiber';
 import type { Dispatch, Dispatcher } from 'react/src/currentDispatcher';
 import {
@@ -6,6 +7,7 @@ import {
 	createUpdateQueue,
 	enqueueUpdate,
 	processUpdateQueue,
+	Update,
 	UpdateQueue
 } from './updateQueue';
 import { Action } from 'shared/ReactTypes';
@@ -25,6 +27,8 @@ interface Hook {
 	memoizedState: any;
 	updateQueue: unknown;
 	next: Hook | null;
+	baseState: any;
+	baseQueue: Update<any> | null;
 }
 
 export type EffectCallback = () => (() => void) | void;
@@ -110,17 +114,27 @@ function dispatchSetState<State>(
 	updateQueue: UpdateQueue<State>,
 	action: Action<State>
 ) {
-	const lane = requestUpdateLane();
-	const update = createUpdate(action, lane);
-	enqueueUpdate(updateQueue, update);
-	scheduleUpdateOnFiber(fiber, lane);
+	// // 卡颂实现
+	// const lane = requestUpdateLane();
+	// const update = createUpdate(action, lane);
+	// enqueueUpdate(updateQueue, update);
+	// scheduleUpdateOnFiber(fiber, lane);
+	// 我的修改（AI生生成）
+	unstable_runWithPriority(unstable_NormalPriority, () => {
+		const lane = requestUpdateLane();
+		const update = createUpdate(action, lane);
+		enqueueUpdate(updateQueue, update);
+		scheduleUpdateOnFiber(fiber, lane);
+	});
 }
 
 function mountWorkInProgressHook(): Hook {
 	const hook: Hook = {
 		memoizedState: null,
 		updateQueue: null,
-		next: null
+		next: null,
+		baseState: null,
+		baseQueue: null
 	};
 	if (workInProgressHook === null) {
 		// mount时第一个hook
@@ -144,16 +158,42 @@ function updateState<State>(): [State, Dispatch<State>] {
 
 	// 计算新state的逻辑
 	const queue = hook.updateQueue as UpdateQueue<State>;
+	const baseState = hook.baseState;
+
 	const pending = queue.shared.pending;
-	queue.shared.pending = null;
+	const current = currentHook!;
+	let baseQueue = current.baseQueue;
 
 	if (pending !== null) {
-		const { memoizedState } = processUpdateQueue(
-			hook.memoizedState,
-			pending,
-			renderLane
-		);
-		hook.memoizedState = memoizedState;
+		// pending update保存在current中
+		if (baseQueue !== null) {
+			// baseQueue b2 -> b0 -> b1 -> b2
+			// pendingQueue p2 -> p0 -> p1 -> p2
+			// b0
+			const baseFirst = baseQueue.next;
+			// p0
+			const pendingFirst = pending.next;
+			// b2 -> p0
+			baseQueue.next = pendingFirst;
+			// p2 -> b0
+			pending.next = baseFirst;
+			// p2 -> b0 -> b1 -> b2 -> p0 -> p1 -> p2
+		}
+		baseQueue = pending;
+		// 保存在 current 中
+		current.baseQueue = pending;
+		queue.shared.pending = null;
+
+		if (baseQueue !== null) {
+			const {
+				memoizedState,
+				baseQueue: newBaseQueue,
+				baseState: newBaseState
+			} = processUpdateQueue(baseState, baseQueue, renderLane);
+			hook.memoizedState = memoizedState;
+			hook.baseState = newBaseState;
+			hook.baseQueue = newBaseQueue;
+		}
 	}
 
 	return [hook.memoizedState, queue.dispatch as Dispatch<State>];
@@ -183,10 +223,13 @@ function updateWorkInProgressHook(): Hook {
 	}
 
 	currentHook = nextCurrentHook as Hook;
-	const newHook = {
+
+	const newHook: Hook = {
 		memoizedState: currentHook.memoizedState,
 		updateQueue: currentHook.updateQueue,
-		next: null
+		next: null,
+		baseQueue: currentHook.baseQueue,
+		baseState: currentHook.baseState
 	};
 
 	if (workInProgressHook === null) {
