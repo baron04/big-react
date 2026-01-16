@@ -1,3 +1,20 @@
 button {
-	margin: 0 5px;
+	padding: 0 12px;
+	color: #262626;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	font-size: 14px;
+	border-radius: 8px;
+	outline: none;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+	height: 32px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	margin-right: 10px;
+}
+
+button:hover {
+	color: #fff;
+	background: #171717;
 }
