@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 function App() {
@@ -22,6 +21,6 @@ function Child({ children }: any) {
 	return <li>{children}</li>;
 }
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<App />);
 window.root = root;

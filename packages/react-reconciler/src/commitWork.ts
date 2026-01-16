@@ -185,9 +185,9 @@ function commitNestedComponent(
 }
 
 const commitPlacement = (finishedWork: FiberNode) => {
-	if (__DEV__) {
-		console.warn('执行Placement操作', finishedWork);
-	}
+	// if (__DEV__) {
+	// 	console.warn('执行Placement操作', finishedWork);
+	// }
 
 	// parent DOM
 	const hostParent = getHostParent(finishedWork);
