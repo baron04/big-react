@@ -4,6 +4,7 @@ import currentDispatcher, {
 	resolveDispatcher
 } from './src/currentDispatcher';
 import { createElement } from './src/jsx';
+import currentBatchConfig from './src/currentBatchConfig';
 
 const version = '0.0.0';
 
@@ -17,9 +18,15 @@ const useEffect: Dispatcher['useEffect'] = (create, deps) => {
 	return dispatcher.useEffect(create, deps);
 };
 
+const useTransition: Dispatcher['useTransition'] = () => {
+	const dispatcher = resolveDispatcher();
+	return dispatcher.useTransition();
+};
+
 // 内部数据共享层
 const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
-	currentDispatcher
+	currentDispatcher,
+	currentBatchConfig
 };
 
 function isValidElement(object: any) {
@@ -35,6 +42,7 @@ export {
 	createElement,
 	useState,
 	useEffect,
+	useTransition,
 	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
 	isValidElement
 };
@@ -44,6 +52,7 @@ export default {
 	createElement,
 	useState,
 	useEffect,
+	useTransition,
 	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
 	isValidElement
 };
