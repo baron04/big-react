@@ -2,6 +2,7 @@ import { ReactElement } from 'shared/ReactTypes';
 import { FiberNode } from './fiber';
 import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import {
+	ContextProvider,
 	Fragment,
 	FunctionComponent,
 	HostComponent,
@@ -27,6 +28,8 @@ export function beginWork(wip: FiberNode, renderLane: Lane) {
 			return null;
 		case Fragment:
 			return updateFragment(wip);
+		case ContextProvider:
+			return updateContextProvider(wip);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -65,6 +68,18 @@ function updateFunctionComponent(wip: FiberNode, renderLane: Lane) {
 function updateFragment(wip: FiberNode) {
 	const nextChildren = wip.pendingProps;
 	reconcileChildren(wip, nextChildren as ReactElement);
+	return wip.child;
+}
+
+function updateContextProvider(wip: FiberNode) {
+	const providerType = wip.type;
+	const context = providerType.__context;
+	const newProps = wip.pendingProps;
+
+	// TODO
+
+	const nextChildren = newProps.children;
+	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }
 

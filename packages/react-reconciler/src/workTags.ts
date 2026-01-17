@@ -3,13 +3,15 @@ export type WorkTag =
 	| typeof HostRoot
 	| typeof HostComponent
 	| typeof HostText
-	| typeof Fragment;
+	| typeof Fragment
+	| typeof ContextProvider;
 
 export const FunctionComponent = 0;
 export const HostRoot = 3; // React 应用根节点
 export const HostComponent = 5; // 原生 DOM 节点（div、span等）
 export const HostText = 6; // 文本节点
 export const Fragment = 7;
+export const ContextProvider = 7;
 
 // HostRoot 是：
 // React 应用的 最顶层 Fiber 节点
