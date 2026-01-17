@@ -1,10 +1,10 @@
-import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols';
 import currentDispatcher, {
 	Dispatcher,
 	resolveDispatcher
 } from './src/currentDispatcher';
 import { createElement } from './src/jsx';
 import currentBatchConfig from './src/currentBatchConfig';
+import { isValidElement } from './src/jsx';
 
 const version = '0.0.0';
 
@@ -23,36 +23,35 @@ const useTransition: Dispatcher['useTransition'] = () => {
 	return dispatcher.useTransition();
 };
 
+const useRef: Dispatcher['useRef'] = (initialValue) => {
+	const dispatcher = resolveDispatcher();
+	return dispatcher.useRef(initialValue);
+};
+
 // 内部数据共享层
 const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
 	currentDispatcher,
 	currentBatchConfig
 };
 
-function isValidElement(object: any) {
-	return (
-		typeof object === 'object' &&
-		object !== null &&
-		object.$$typeof === REACT_ELEMENT_TYPE
-	);
-}
-
 export {
+	isValidElement,
 	version,
 	createElement,
 	useState,
 	useEffect,
 	useTransition,
-	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
-	isValidElement
+	useRef,
+	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 
 export default {
+	isValidElement,
 	version,
 	createElement,
 	useState,
 	useEffect,
 	useTransition,
-	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
-	isValidElement
+	useRef,
+	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };

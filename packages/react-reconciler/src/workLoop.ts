@@ -4,6 +4,7 @@ import {
 	commitHookEffectListCreate,
 	commitHookEffectListDestroy,
 	commitHookEffectListUnmount,
+	commitLayoutEffects,
 	commitMutationEffects
 } from './commitWork';
 import { completeWork } from './completeWork';
@@ -128,7 +129,7 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
 function performSyncWorkOnRoot(root: FiberRootNode) {
 	const nextLane = getHighestPriorityLane(root.pendingLanes);
 	if (nextLane !== SyncLane) {
-		// 其它比SyncLane低的优先级
+		// 其它比 SyncLane 低的优先级
 		// NoLane
 		ensureRootIsScheduled(root);
 		return;
@@ -154,20 +155,20 @@ function performSyncWorkOnRoot(root: FiberRootNode) {
 function performConcurrentWorkOnRoot(
 	root: FiberRootNode,
 	didTimeout: boolean
-): any {
+): void | ((didTimeout: boolean) => void) {
 	// 保证 useEffect 回调执行
 	const curCallback = root.callbackNode;
 	const didFlushPassiveEffect = flushPassiveEffects(root.pendingPassiveEffects);
 	if (didFlushPassiveEffect) {
 		if (root.callbackNode !== curCallback) {
-			return null;
+			return;
 		}
 	}
 
 	const lane = getHighestPriorityLane(root.pendingLanes);
-	const currentCallBackNode = root.callbackNode;
+	const currentCallbackNode = root.callbackNode;
 	if (lane === NoLane) {
-		return null;
+		return;
 	}
 
 	const needSync = lane === SyncLane || didTimeout;
@@ -178,8 +179,8 @@ function performConcurrentWorkOnRoot(
 
 	if (existStatus === RootInComplete) {
 		// 中断
-		if (root.callbackNode !== currentCallBackNode) {
-			return null;
+		if (root.callbackNode !== currentCallbackNode) {
+			return;
 		}
 		return performConcurrentWorkOnRoot.bind(null, root);
 	}
@@ -212,7 +213,7 @@ function commitRoot(root: FiberRootNode) {
 
 	const lane = root.finishedLane;
 	if (lane === NoLane && __DEV__) {
-		console.error('commit阶段finishedLane不应该是NoLane');
+		console.error('commit 阶段 finishedLane 不应该是 NoLane');
 	}
 
 	// 重置
@@ -242,14 +243,17 @@ function commitRoot(root: FiberRootNode) {
 	const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
 
 	if (subtreeHasEffect || rootHasEffect) {
-		// beforeMutation
+		// 阶段1/3: beforeMutation
 
-		// mutation Placement
+		// 阶段2/3: Mutation
 		commitMutationEffects(finishedWork, root);
+		// fiber tree 切换
 		root.current = finishedWork;
 
-		// layout
+		// 阶段3/3: Layout
+		commitLayoutEffects(finishedWork, root);
 	} else {
+		// fiber tree 切换
 		root.current = finishedWork;
 	}
 
