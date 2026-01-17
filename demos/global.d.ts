@@ -1,10 +1,8 @@
-import * as React from 'react';
-
 declare global {
 	namespace JSX {
-		type Element = React.ReactElement;
+		type Element = any;
 		interface ElementClass {
-			render(): React.ReactNode;
+			render(): any;
 		}
 		interface ElementAttributesProperty {
 			props: object;
@@ -20,6 +18,9 @@ declare global {
 			span: any;
 			ul: any;
 			li: any;
+			p: any;
+			a: any;
+			button: any;
 			// 添加其他需要的 HTML 元素
 			[elemName: string]: any;
 		}

@@ -5,10 +5,10 @@ function App() {
 	const [isDel, del] = useState(false);
 	const divRef = useRef(null);
 
-	console.warn('render divRef', divRef.current);
+	console.log('render divRef', divRef.current);
 
 	useEffect(() => {
-		console.warn('useEffect divRef', divRef.current);
+		console.log('useEffect divRef', divRef.current);
 	}, []);
 
 	return (
@@ -19,7 +19,7 @@ function App() {
 }
 
 function Child() {
-	return <p ref={(dom: Element) => console.warn('dom is:', dom)}>Child</p>;
+	return <p ref={(dom: Element) => console.log('child dom is:', dom)}>Child</p>;
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

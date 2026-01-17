@@ -46,7 +46,7 @@ export function markRootFinished(root: FiberRootNode, lane: Lane) {
 	root.pendingLanes &= ~lane;
 }
 
-export function lanesToSchedulerPriority(lanes: Lanes) {
+export function lanesToSchedulerPriority(lanes: Lanes): Lanes {
 	const lane = getHighestPriorityLane(lanes);
 
 	if (lane === SyncLane) {

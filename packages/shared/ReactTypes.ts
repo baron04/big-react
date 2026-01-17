@@ -1,6 +1,6 @@
 export type Type = any;
 export type Key = string | number;
-export type Ref = any;
+export type Ref = null | { current: any } | ((instance: any) => void);
 export type Props = {
 	[key: string]: any;
 	children?: any;

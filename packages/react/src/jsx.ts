@@ -1,5 +1,5 @@
 import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
-import { Key, Props, type ReactElement, Ref, Type } from 'shared/ReactTypes';
+import type { Key, Props, ReactElement, Ref, Type } from 'shared/ReactTypes';
 
 const ReactElement = function (
 	type: Type,
@@ -32,30 +32,20 @@ export const jsx = function (type: Type, config: any, maybeKey: any) {
 	for (const prop in config) {
 		const val = config[prop];
 
-		// if (prop === 'key') {
-		// 	if (val !== undefined) {
-		// 		key = '' + prop;
-		// 	}
-		// 	continue;
-		// }
-
-		if (prop === 'ref') {
+		if (prop === 'key') {
 			if (val !== undefined) {
-				ref = '' + prop;
+				key = '' + val;
 			}
 			continue;
 		}
 
-		// if (prop === 'children') {
-		// 	if (val.length === 1) {
-		// 		props.children = val[0];
-		// 	} else {
-		// 		props.children = val;
-		// 	}
-		// 	continue;
-		// }
+		if (prop === 'ref') {
+			if (val !== undefined) {
+				ref = val;
+			}
+			continue;
+		}
 
-		// {}.hasOwnProperty.call(config, prop)
 		if (Object.prototype.hasOwnProperty.call(config, prop)) {
 			props[prop] = val;
 		}
@@ -63,6 +53,14 @@ export const jsx = function (type: Type, config: any, maybeKey: any) {
 
 	return ReactElement(type, key, ref, props);
 };
+
+export function isValidElement(object: any) {
+	return (
+		typeof object === 'object' &&
+		object !== null &&
+		object.$$typeof === REACT_ELEMENT_TYPE
+	);
+}
 
 export const jsxDEV = jsx;
 export const jsxs = jsx;
