@@ -1,12 +1,9 @@
-import currentDispatcher from './src/currentDispatcher';
-import currentBatchConfig from './src/currentBatchConfig';
-
-const __SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
-	currentDispatcher,
-	currentBatchConfig
-};
-
-import { createElement, isValidElement } from './src/jsx';
+import {
+	createElement,
+	Fragment,
+	isValidElement,
+	Suspense
+} from './src/jsx';
 import { createContext } from './src/context';
 import {
 	useState,
@@ -15,6 +12,14 @@ import {
 	useRef,
 	useContext
 } from './src/hooks';
+
+import currentDispatcher from './src/currentDispatcher';
+import currentBatchConfig from './src/currentBatchConfig';
+
+const __SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
+	currentDispatcher,
+	currentBatchConfig
+};
 
 const version = '1.0.0';
 
@@ -30,6 +35,8 @@ export {
 	useContext,
 	createContext,
 	isValidElement,
+	Fragment,
+	Suspense,
 	__SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 
@@ -43,6 +50,8 @@ const React = {
 	useContext,
 	createContext,
 	isValidElement,
+	Fragment,
+	Suspense,
 	__SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 

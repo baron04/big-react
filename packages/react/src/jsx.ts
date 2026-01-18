@@ -1,4 +1,8 @@
-import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
+import {
+	REACT_ELEMENT_TYPE,
+	REACT_FRAGMENT_TYPE,
+	REACT_SUSPENSE_TYPE
+} from 'shared/ReactSymbols';
 import type { Key, Props, ReactElement, Ref, Type } from 'shared/ReactTypes';
 
 const ReactElement = function (
@@ -100,6 +104,7 @@ export const createElement = (
 	return ReactElement(type, key, ref, props);
 };
 
-export const Fragment = REACT_FRAGMENT_TYPE;
 export const jsxDEV = jsx;
 export const jsxs = jsx;
+export const Fragment = REACT_FRAGMENT_TYPE;
+export const Suspense = REACT_SUSPENSE_TYPE;
