@@ -12,6 +12,7 @@ export interface Instance {
 	children: Array<Instance | TextInstance>;
 	parent: number;
 	props: Props;
+	style?: Record<string, string>;
 }
 export interface TextInstance {
 	text: string;
@@ -78,11 +79,8 @@ export function commitUpdate(fiber: FiberNode) {
 	}
 }
 
-export function commitTextUpdate(
-	textInstancance: TextInstance,
-	content: string
-) {
-	textInstancance.text = content;
+export function commitTextUpdate(textInstance: TextInstance, content: string) {
+	textInstance.text = content;
 }
 
 export function removeChild(
@@ -119,3 +117,25 @@ export const scheduleMicroTask =
 			? (callback: (...args: unknown[]) => void) =>
 					Promise.resolve(null).then(callback)
 			: setTimeout;
+
+export function hideInstance(instance: Instance) {
+	const style = instance.style;
+	if (style) {
+		style.display = 'none !important';
+	}
+}
+
+export function unhideInstance(instance: Instance) {
+	const style = instance.style;
+	if (style) {
+		style.display = '';
+	}
+}
+
+export function hideTextInstance(textInstance: TextInstance) {
+	textInstance.text = '';
+}
+
+export function unhideTextInstance(textInstance: TextInstance, text: string) {
+	textInstance.text = text;
+}

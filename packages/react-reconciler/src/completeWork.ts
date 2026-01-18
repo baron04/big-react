@@ -12,9 +12,11 @@ import {
 	FunctionComponent,
 	HostComponent,
 	HostRoot,
-	HostText
+	HostText,
+	SuspenseComponent,
+	OffscreenComponent
 } from './workTags';
-import { NoFlags, Ref, Update } from './fiberFlags';
+import { NoFlags, Ref, Update, Visibility } from './fiberFlags';
 import { popProvider } from './fiberContext';
 
 function markUpdate(fiber: FiberNode) {
@@ -73,6 +75,7 @@ export const completeWork = (wip: FiberNode) => {
 		case HostRoot:
 		case FunctionComponent:
 		case Fragment:
+		case OffscreenComponent:
 			bubbleProperties(wip);
 			return null;
 		case ContextProvider: {
@@ -81,6 +84,26 @@ export const completeWork = (wip: FiberNode) => {
 			bubbleProperties(wip);
 			return null;
 		}
+		case SuspenseComponent: {
+			const offscreenFiber = wip.child!;
+			const isHidden = offscreenFiber.pendingProps.mode === 'hidden';
+			const currentOffscreenFiber = offscreenFiber.alternate;
+
+			if (currentOffscreenFiber !== null) {
+				// update
+				const wasHidden = currentOffscreenFiber.pendingProps.mode === 'hidden';
+				if (isHidden !== wasHidden) {
+					offscreenFiber.flags |= Visibility;
+					bubbleProperties(offscreenFiber);
+				}
+			} else if (isHidden) {
+				offscreenFiber.flags |= Visibility;
+				bubbleProperties(offscreenFiber);
+			}
+			bubbleProperties(wip);
+			return null;
+		}
+
 		default:
 			if (__DEV__) {
 				console.warn('未处理的completeWork情况', wip.tag);
