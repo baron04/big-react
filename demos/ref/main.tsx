@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 function App() {
 	const [isDel, del] = useState(false);

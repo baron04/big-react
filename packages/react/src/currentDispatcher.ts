@@ -1,4 +1,4 @@
-import {
+import type {
 	EffectCallback,
 	DependencyList
 } from 'react-reconciler/src/fiberHooks';

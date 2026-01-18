@@ -15,13 +15,11 @@ export default [
 		output: [
 			{
 				file: `${pkgDistPath}/index.js`,
-				name: 'ReactDOM',
-				format: 'umd'
+				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/client.js`,
-				name: 'client',
-				format: 'umd'
+				file: `${pkgDistPath}/index.esm.js`,
+				format: 'es'
 			}
 		],
 		external: [...Object.keys(peerDependencies)],
@@ -43,8 +41,47 @@ export default [
 					peerDependencies: {
 						react: version
 					},
-					main: 'index.js'
+					main: 'index.js',
+					module: 'index.esm.js',
+					exports: {
+						'.': {
+							import: './index.esm.js',
+							require: './index.js'
+						},
+						'./client': {
+							import: './client.esm.js',
+							require: './client.js'
+						},
+						'./test-utils': {
+							import: './test-utils.esm.js',
+							require: './test-utils.js'
+						}
+					}
 				})
+			})
+		]
+	},
+	// react-dom/client
+	{
+		input: `${pkgPath}/client.ts`,
+		output: [
+			{
+				file: `${pkgDistPath}/client.js`,
+				format: 'cjs'
+			},
+			{
+				file: `${pkgDistPath}/client.esm.js`,
+				format: 'es'
+			}
+		],
+		external: [...Object.keys(peerDependencies)],
+		plugins: [
+			...getBaseRollupPlugins(),
+			// webpack resolve alias
+			alias({
+				entries: {
+					hostConfig: `${pkgPath}/src/hostConfig.ts`
+				}
 			})
 		]
 	},
@@ -54,11 +91,14 @@ export default [
 		output: [
 			{
 				file: `${pkgDistPath}/test-utils.js`,
-				name: 'testUtils',
-				format: 'umd'
+				format: 'cjs'
+			},
+			{
+				file: `${pkgDistPath}/test-utils.esm.js`,
+				format: 'es'
 			}
 		],
-		external: ['react-dom', 'react', 'scheduler'],
+		external: ['react-dom', 'react'],
 		plugins: getBaseRollupPlugins()
 	}
 ];

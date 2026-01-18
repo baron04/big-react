@@ -129,7 +129,6 @@ importers:
       react:
         specifier: workspace:*
         version: link:../react
-    devDependencies:
       react-reconciler:
         specifier: workspace:*
         version: link:../react-reconciler
@@ -142,7 +141,6 @@ importers:
       react:
         specifier: workspace:*
         version: link:../react
-    devDependencies:
       react-reconciler:
         specifier: workspace:*
         version: link:../react-reconciler

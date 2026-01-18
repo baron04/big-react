@@ -1,3 +1,3 @@
-import * as ReactDOM from './src/root';
+const ReactDOM = {};
 
 export default ReactDOM;

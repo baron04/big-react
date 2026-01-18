@@ -18,9 +18,17 @@ const ReactElement = function (
 	return element;
 };
 
+export function isValidElement(object: any) {
+	return (
+		typeof object === 'object' &&
+		object !== null &&
+		object.$$typeof === REACT_ELEMENT_TYPE
+	);
+}
+
 // 在 传统转换（Classic Runtime）中，React.createElement 的第三个参数及其后的参数都是 子元素（children）
 // 在 自动转换（Automatic Runtime） 中，_jsx 函数只有 两个参数，所有的子元素都通过第二个参数的 children 属性来传递。
-export const jsx = function (type: Type, config: any, maybeKey: any) {
+export const jsx = (type: Type, config: Props, maybeKey?: Key) => {
 	let key: Key | null = null;
 	const props: Props = {};
 	let ref: Ref = null;
@@ -54,15 +62,44 @@ export const jsx = function (type: Type, config: any, maybeKey: any) {
 	return ReactElement(type, key, ref, props);
 };
 
-export function isValidElement(object: any) {
-	return (
-		typeof object === 'object' &&
-		object !== null &&
-		object.$$typeof === REACT_ELEMENT_TYPE
-	);
-}
+export const createElement = (
+	type: Type,
+	config?: Record<string, any>,
+	...maybeChildren: unknown[]
+) => {
+	let key: Key | null = null;
+	let ref: Ref = null;
+	const props: Props = {};
 
-export const jsxDEV = jsx;
-export const jsxs = jsx;
+	for (const prop in config) {
+		const val = config[prop];
+		if (prop === 'key') {
+			if (val !== undefined) {
+				key = '' + val;
+			}
+			continue;
+		}
+		if (prop === 'ref') {
+			if (val !== undefined) {
+				ref = val;
+			}
+			continue;
+		}
+		if (Object.prototype.hasOwnProperty.call(config, prop)) {
+			props[prop] = val;
+		}
+	}
+
+	const childrenLength = maybeChildren.length;
+	if (childrenLength === 1) {
+		props.children = maybeChildren[0];
+	} else if (childrenLength > 1) {
+		props.children = maybeChildren;
+	}
+
+	return ReactElement(type, key, ref, props);
+};
 
 export const Fragment = REACT_FRAGMENT_TYPE;
+export const jsxDEV = jsx;
+export const jsxs = jsx;

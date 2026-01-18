@@ -11,11 +11,16 @@ export default [
 	// react
 	{
 		input: `${pkgPath}/${module}`,
-		output: {
-			file: `${pkgDistPath}/index.js`,
-			name: 'React',
-			format: 'umd'
-		},
+		output: [
+			{
+				file: `${pkgDistPath}/index.js`,
+				format: 'cjs'
+			},
+			{
+				file: `${pkgDistPath}/index.esm.js`,
+				format: 'es'
+			}
+		],
 		plugins: [
 			...getBaseRollupPlugins(),
 			generatePackageJson({
@@ -25,7 +30,22 @@ export default [
 					name,
 					description,
 					version,
-					main: 'index.js'
+					main: 'index.js',
+					module: 'index.esm.js',
+					exports: {
+						'.': {
+							import: './index.esm.js',
+							require: './index.js'
+						},
+						'./jsx-runtime': {
+							import: './jsx-runtime.esm.js',
+							require: './jsx-runtime.js'
+						},
+						'./jsx-dev-runtime': {
+							import: './jsx-dev-runtime.esm.js',
+							require: './jsx-dev-runtime.js'
+						}
+					}
 				})
 			})
 		]
@@ -37,14 +57,22 @@ export default [
 			// jsx-runtime
 			{
 				file: `${pkgDistPath}/jsx-runtime.js`,
-				name: 'jsx-runtime',
-				format: 'umd'
+				format: 'cjs'
 			},
-			// jsx-runtime
+			// jsx-dev-runtime
 			{
 				file: `${pkgDistPath}/jsx-dev-runtime.js`,
-				name: 'jsx-dev-runtime',
-				format: 'umd'
+				format: 'cjs'
+			},
+			// esm jsx-runtime
+			{
+				file: `${pkgDistPath}/jsx-runtime.esm.js`,
+				format: 'es'
+			},
+			// esm jsx-dev-runtime
+			{
+				file: `${pkgDistPath}/jsx-dev-runtime.esm.js`,
+				format: 'es'
 			}
 		],
 		plugins: [...getBaseRollupPlugins()]

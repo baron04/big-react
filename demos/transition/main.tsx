@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 
 import { useState, useTransition } from 'react';
 import TabButton from './TabButton';

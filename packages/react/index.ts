@@ -6,7 +6,7 @@ const __SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
 	currentBatchConfig
 };
 
-import { jsxDEV, isValidElement } from './src/jsx';
+import { createElement, isValidElement } from './src/jsx';
 import { createContext } from './src/context';
 import {
 	useState,
@@ -22,7 +22,7 @@ const version = '1.0.0';
 
 export {
 	version,
-	jsxDEV as createElement,
+	createElement,
 	useState,
 	useEffect,
 	useTransition,
@@ -35,7 +35,7 @@ export {
 
 const React = {
 	version,
-	createElement: jsxDEV,
+	createElement,
 	useState,
 	useEffect,
 	useTransition,
