@@ -17,11 +17,14 @@ export default [
 		output: [
 			{
 				file: `${pkgDistPath}/index.js`,
-				name: 'ReactNoopRenderer',
-				format: 'umd'
+				format: 'cjs'
+			},
+			{
+				file: `${pkgDistPath}/index.esm.js`,
+				format: 'es'
 			}
 		],
-		external: [...Object.keys(peerDependencies), 'scheduler'],
+		external: [...Object.keys(peerDependencies)],
 		plugins: [
 			...getBaseRollupPlugins({
 				typescript: {
@@ -51,7 +54,14 @@ export default [
 					peerDependencies: {
 						react: version
 					},
-					main: 'index.js'
+					main: 'index.js',
+					module: 'index.esm.js',
+					exports: {
+						'.': {
+							import: './index.esm.js',
+							require: './index.js'
+						}
+					}
 				})
 			})
 		]

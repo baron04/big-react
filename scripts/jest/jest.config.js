@@ -4,10 +4,10 @@ const { defaults } = require('jest-config');
 module.exports = {
 	...defaults,
 	rootDir: process.cwd(),
-	modulePathIgnorePatterns: ['<rootDir>/.history'],
+	modulePathIgnorePatterns: ['<rootDir>/.history', '<rootDir>/dist'],
 	moduleDirectories: [
 		// 对于 React ReactDOM
-		'dist/node_modules',
+		'dist',
 		// 对于第三方依赖
 		...defaults.moduleDirectories
 	],
