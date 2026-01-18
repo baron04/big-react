@@ -1,4 +1,4 @@
-import { Fragment, Suspense, useState } from 'react';
+import { Suspense, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Cpn } from './Cpn';
 
@@ -6,7 +6,7 @@ import { Cpn } from './Cpn';
 function App() {
 	return (
 		<Suspense fallback={<div>loading...</div>}>
-			<Cpn id={0} timeout={1000} />
+			<Cpn id={0} timeout={3000} />
 		</Suspense>
 		// <Cpn id={0} timeout={3000} />
 	);
@@ -37,4 +37,4 @@ function App() {
 // 	);
 // }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
