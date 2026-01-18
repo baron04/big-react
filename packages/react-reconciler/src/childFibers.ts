@@ -307,7 +307,9 @@ function getElementKeyToUse(element: any, index: number): Key {
 	if (
 		Array.isArray(element) ||
 		typeof element === 'string' ||
-		typeof element === 'number'
+		typeof element === 'number' ||
+		element === null ||
+		element === undefined
 	) {
 		return index;
 	}
