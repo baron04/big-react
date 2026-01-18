@@ -10,7 +10,8 @@ import {
 	useEffect,
 	useTransition,
 	useRef,
-	useContext
+	useContext,
+	use
 } from './src/hooks';
 
 import currentDispatcher from './src/currentDispatcher';
@@ -33,6 +34,7 @@ export {
 	useRef,
 	useContext,
 	createContext,
+	use,
 	isValidElement,
 	Fragment,
 	Suspense,
@@ -48,6 +50,7 @@ const React = {
 	useRef,
 	useContext,
 	createContext,
+	use,
 	isValidElement,
 	Fragment,
 	Suspense,
