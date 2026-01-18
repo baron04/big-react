@@ -418,3 +418,9 @@ function use<T>(usable: Usable<T>): T {
 
 	throw new Error('不支持的 use 参数' + usable);
 }
+
+export function resetHooksOnUnwind() {
+	currentlyRenderingFiber = null;
+	currentHook = null;
+	workInProgressHook = null;
+}

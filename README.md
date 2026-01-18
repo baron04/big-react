@@ -17,6 +17,9 @@
 - 修复 react 和 shared 的循环引用问题，这个问题会导致 npm link 调试时，代码执行到 `packages/shared/internals.ts` React 是 undefined
 - 去掉 UMD 模块规范的打包，统一使用 CJS+ESM 规范打包。不需要支持「直接 `<script>` 用 CDN + 全局变量」的场景。统一成 ESM + CJS 更简单、也更贴近当下主流生态，支持 vite ESM 规范
 - 通过全部测试用例
+- 增加了2个Suspense用例
+- 最终版本代码 Suspense demo 不符合预期，不会从 fallback 切换 primary，已修复
+  - 卡颂版本在「22-6 实现unwind流程」写的 attachPingListener 存在 bug
 
 ## 三种调试方式
 

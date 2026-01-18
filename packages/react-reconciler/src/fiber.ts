@@ -1,4 +1,10 @@
-import type { Key, Props, ReactElement, Ref } from 'shared/ReactTypes';
+import type {
+	Key,
+	Props,
+	ReactElement,
+	Ref,
+	Wakeable
+} from 'shared/ReactTypes';
 import {
 	ContextProvider,
 	Fragment,
@@ -84,6 +90,8 @@ export class FiberRootNode {
 	callbackNode: CallbackNode | null;
 	callbackPriority: Lane;
 
+	pingCache: WeakMap<Wakeable<any>, Set<Lane>> | null;
+
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;
@@ -99,6 +107,8 @@ export class FiberRootNode {
 			unmount: [],
 			update: []
 		};
+
+		this.pingCache = null;
 	}
 }
 
@@ -111,6 +121,7 @@ export const createWorkInProgress = (
 		// 首屏渲染wip是null
 		// mount
 		wip = new FiberNode(current.tag, pendingProps, current.key);
+		wip.type = current.type;
 		wip.stateNode = current.stateNode;
 
 		wip.alternate = current;
