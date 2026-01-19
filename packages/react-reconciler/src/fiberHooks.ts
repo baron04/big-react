@@ -12,11 +12,18 @@ import {
 } from './updateQueue';
 import { Action, ReactContext, Thenable, Usable } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
-import { Lane, mergeLanes, NoLane, requestUpdateLane } from './fiberLanes';
+import {
+	Lane,
+	mergeLanes,
+	NoLane,
+	removeLanes,
+	requestUpdateLane
+} from './fiberLanes';
 import { Flags, PassiveEffect } from './fiberFlags';
 import { HookHasEffect, Passive } from './hookEffectTags';
 import { REACT_CONTEXT_TYPE } from 'shared/ReactSymbols';
 import { trackUsedThenable } from './thenable';
+import { markWipReceivedUpdate } from './beginWork';
 
 let currentlyRenderingFiber: FiberNode | null = null;
 let workInProgressHook: Hook | null = null;
@@ -197,6 +204,7 @@ function updateState<State>(): [State, Dispatch<State>] {
 	}
 
 	if (baseQueue !== null) {
+		const prevState = hook.memoizedState;
 		const {
 			memoizedState,
 			baseQueue: newBaseQueue,
@@ -204,8 +212,20 @@ function updateState<State>(): [State, Dispatch<State>] {
 		} = processUpdateQueue(baseState, baseQueue, renderLane, (update) => {
 			const skippedLane = update.lane;
 			const fiber = currentlyRenderingFiber!;
+			// NoLanes
 			fiber.lanes = mergeLanes(fiber.lanes, skippedLane);
 		});
+
+		// NaN === NaN         // false
+		// Object.is(NaN, NaN) // true
+
+		// +0 === -0           // true
+		// Object.is(+0, -0)   // false
+
+		if (!Object.is(prevState, memoizedState)) {
+			markWipReceivedUpdate();
+		}
+
 		hook.memoizedState = memoizedState;
 		hook.baseState = newBaseState;
 		hook.baseQueue = newBaseQueue;
@@ -426,4 +446,12 @@ export function resetHooksOnUnwind() {
 	currentlyRenderingFiber = null;
 	currentHook = null;
 	workInProgressHook = null;
+}
+
+export function bailoutHook(wip: FiberNode, renderLane: Lane) {
+	const current = wip.alternate!;
+	wip.updateQueue = current.updateQueue;
+	wip.flags &= ~PassiveEffect;
+
+	current.lanes = removeLanes(current.lanes, renderLane);
 }
