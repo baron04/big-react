@@ -74,7 +74,7 @@ function prepareFreshStack(root: FiberRootNode, lane: Lane) {
 
 export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
 	// TODO 调度功能
-	const root = markUpdateFromFiberToRoot(fiber);
+	const root = markUpdateLaneFromFiberToRoot(fiber, lane);
 	markRootUpdated(root, lane);
 	ensureRootIsScheduled(root);
 }
@@ -109,16 +109,16 @@ export function ensureRootIsScheduled(root: FiberRootNode) {
 
 	if (updateLane === SyncLane) {
 		// 同步优先级 用微任务调度
-		if (__DEV__) {
-			console.log('在微任务中调度，优先级：', updateLane);
-		}
+		// if (__DEV__) {
+		// 	console.log('在微任务中调度，优先级：', updateLane);
+		// }
 		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
 		scheduleMicroTask(flushSyncCallbacks);
 	} else {
 		// 其它优先级 用宏任务调度
-		if (__DEV__) {
-			console.log('在宏任务中调度，优先级：', updateLane);
-		}
+		// if (__DEV__) {
+		// 	console.log('在宏任务中调度，优先级：', updateLane);
+		// }
 		const schedulerPriority = lanesToSchedulerPriority(updateLane);
 		newCallbackNode = scheduleCallback(
 			schedulerPriority,
@@ -135,10 +135,21 @@ export function markRootUpdated(root: FiberRootNode, lane: Lane) {
 	root.pendingLanes = mergeLanes(root.pendingLanes, lane);
 }
 
-function markUpdateFromFiberToRoot(fiber: FiberNode) {
+function markUpdateLaneFromFiberToRoot(fiber: FiberNode, lane: Lane) {
+	fiber.lanes = mergeLanes(fiber.lanes, lane);
+	const alternate = fiber.alternate;
+	if (alternate !== null) {
+		alternate.lanes = mergeLanes(alternate.lanes, lane);
+	}
+
 	let node = fiber;
 	let parent = node.return;
 	while (parent !== null) {
+		parent.childLanes = mergeLanes(parent.childLanes, lane);
+		const alternate = parent.alternate;
+		if (alternate !== null) {
+			alternate.childLanes = mergeLanes(alternate.childLanes, lane);
+		}
 		node = parent;
 		parent = node.return;
 	}
@@ -301,9 +312,9 @@ function commitRoot(root: FiberRootNode) {
 }
 
 function renderRoot(root: FiberRootNode, lane: Lane, shouldTimeSlice: boolean) {
-	if (__DEV__) {
-		console.log(`开始${shouldTimeSlice ? '并发' : '同步'}更新`, root);
-	}
+	// if (__DEV__) {
+	// 	console.log(`开始${shouldTimeSlice ? '并发' : '同步'}更新`, root);
+	// }
 
 	if (wipRootRenderLane !== lane) {
 		// 初始化
