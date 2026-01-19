@@ -20,6 +20,7 @@
 - 增加了2个Suspense用例
 - 最终版本代码 Suspense demo 不符合预期，不会从 fallback 切换 primary，已修复
   - 卡颂版本在「22-6 实现unwind流程」写的 attachPingListener 存在 bug
+  - 卡颂版本在「23-3 实现bailout策略(上)」写的 markUpdateLaneFromFiberToRoot 存在 bug
 
 ## 三种调试方式
 

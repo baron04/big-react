@@ -1,12 +1,12 @@
-import { useState, useContext, createContext, memo } from 'react';
+import { useState } from 'react';
 
 export default function App() {
-	const [num, update] = useState(0);
+	const [num, setNum] = useState(0);
 	console.log('App render ', num);
 
 	return (
 		<div>
-			<button onClick={() => update(num + 1)}>+ 1</button>
+			<button onClick={() => setNum(num + 1)}>+ 1</button>
 			<p>num is: {num}</p>
 			<ExpensiveSubtree />
 		</div>

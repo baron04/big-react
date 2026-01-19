@@ -19,7 +19,7 @@ import {
 } from './workTags';
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
 import { renderWithHooks } from './fiberHooks';
-import { Lane } from './fiberLanes';
+import { Lane, NoLanes } from './fiberLanes';
 import {
 	ChildDeletion,
 	DidCapture,
@@ -32,6 +32,11 @@ import { pushSuspenseHandler } from './suspenseContext';
 
 // 递归中的递阶段
 export function beginWork(wip: FiberNode, renderLane: Lane) {
+	// TODO bailout 策略
+	// return 复用的结果
+
+	wip.lanes = NoLanes;
+
 	// 比较，返回子 fiberNode
 	switch (wip.tag) {
 		case HostRoot:

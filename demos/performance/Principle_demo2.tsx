@@ -1,11 +1,21 @@
-import { useState, useContext, createContext, memo } from 'react';
+import { useState } from 'react';
 
 export default function App() {
-	const [num, update] = useState(0);
-	console.log('App render ', num);
+	console.log('App render ');
 
 	return (
-		<div onClick={() => update(num + 100)}>
+		<div>
+			<Num />
+			<ExpensiveSubtree />
+		</div>
+	);
+}
+
+function Num() {
+	const [num, update] = useState(0);
+
+	return (
+		<>
 			<button
 				onClick={(e) => {
 					e.stopPropagation();
@@ -15,8 +25,7 @@ export default function App() {
 				+ 1
 			</button>
 			<p>num is: {num}</p>
-			<ExpensiveSubtree />
-		</div>
+		</>
 	);
 }
 

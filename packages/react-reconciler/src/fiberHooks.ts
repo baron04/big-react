@@ -12,7 +12,7 @@ import {
 } from './updateQueue';
 import { Action, ReactContext, Thenable, Usable } from 'shared/ReactTypes';
 import { scheduleUpdateOnFiber } from './workLoop';
-import { Lane, NoLane, requestUpdateLane } from './fiberLanes';
+import { Lane, mergeLanes, NoLane, requestUpdateLane } from './fiberLanes';
 import { Flags, PassiveEffect } from './fiberFlags';
 import { HookHasEffect, Passive } from './hookEffectTags';
 import currentBatchConfig from 'react/src/currentBatchConfig';
@@ -135,7 +135,7 @@ function dispatchSetState<State>(
 	unstable_runWithPriority(unstable_NormalPriority, () => {
 		const lane = requestUpdateLane();
 		const update = createUpdate(action, lane);
-		enqueueUpdate(updateQueue, update);
+		enqueueUpdate(updateQueue, update, fiber, lane);
 		scheduleUpdateOnFiber(fiber, lane);
 	});
 }
@@ -202,7 +202,11 @@ function updateState<State>(): [State, Dispatch<State>] {
 			memoizedState,
 			baseQueue: newBaseQueue,
 			baseState: newBaseState
-		} = processUpdateQueue(baseState, baseQueue, renderLane);
+		} = processUpdateQueue(baseState, baseQueue, renderLane, (update) => {
+			const skippedLane = update.lane;
+			const fiber = currentlyRenderingFiber!;
+			fiber.lanes = mergeLanes(fiber.lanes, skippedLane);
+		});
 		hook.memoizedState = memoizedState;
 		hook.baseState = newBaseState;
 		hook.baseQueue = newBaseQueue;
