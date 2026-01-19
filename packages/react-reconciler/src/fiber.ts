@@ -85,6 +85,8 @@ export class FiberRootNode {
 	finishedWork: FiberNode | null;
 	pendingLanes: Lanes;
 	finishedLane: Lane;
+	suspendedLanes: Lanes;
+	pingedLanes: Lanes;
 	pendingPassiveEffects: PendingPassiveEffects;
 
 	callbackNode: CallbackNode | null;
@@ -99,6 +101,8 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+		this.suspendedLanes = NoLanes;
+		this.pingedLanes = NoLanes;
 
 		this.callbackNode = null;
 		this.callbackPriority = NoLane;
