@@ -7,6 +7,8 @@ export interface Update<State> {
 	action: Action<State>;
 	lane: Lane;
 	next: Update<State> | null;
+	hasEagerState: boolean;
+	eagerState: State | null;
 }
 
 export interface UpdateQueue<State> {
@@ -18,12 +20,16 @@ export interface UpdateQueue<State> {
 
 export const createUpdate = <State>(
 	action: Action<State>,
-	lane: Lane
+	lane: Lane,
+	hasEagerState = false,
+	eagerState: State | null = null
 ): Update<State> => {
 	return {
 		action,
 		lane,
-		next: null
+		next: null,
+		hasEagerState,
+		eagerState
 	};
 };
 
@@ -57,6 +63,19 @@ export const enqueueUpdate = <State>(
 		alternate.lanes = mergeLanes(alternate.lanes, lane);
 	}
 };
+
+export function basicStateReducer<State>(
+	state: State,
+	action: Action<State>
+): State {
+	if (action instanceof Function) {
+		// baseState 1 update (x)=>4x -> memoizedState
+		return action(state);
+	} else {
+		// baseState 1 update 2 -> memoizedState 2
+		return action;
+	}
+}
 
 export const processUpdateQueue = <State>(
 	baseState: State,
@@ -107,12 +126,10 @@ export const processUpdateQueue = <State>(
 					newBaseQueueLast = clone;
 				}
 				const action = pending.action;
-				if (action instanceof Function) {
-					// baseState 1 update (x)=>4x -> memoizedState
-					newState = action(baseState);
+				if (pending.hasEagerState) {
+					newState = pending.eagerState!;
 				} else {
-					// baseState 1 update 2 -> memoizedState 2
-					newState = action;
+					newState = basicStateReducer(baseState, action);
 				}
 			}
 			pending = pending.next!;
