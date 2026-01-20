@@ -1,9 +1,4 @@
-import {
-	createElement,
-	Fragment,
-	isValidElement,
-	Suspense
-} from './src/jsx';
+import { createElement, Fragment, isValidElement, Suspense } from './src/jsx';
 import { createContext } from './src/context';
 import {
 	useState,
@@ -13,6 +8,7 @@ import {
 	useContext,
 	use
 } from './src/hooks';
+import { memo } from './src/memo';
 
 import currentDispatcher from './src/currentDispatcher';
 import currentBatchConfig from './src/currentBatchConfig';
@@ -39,6 +35,7 @@ export {
 	isValidElement,
 	Fragment,
 	Suspense,
+	memo,
 	__SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 
@@ -55,6 +52,7 @@ const React = {
 	isValidElement,
 	Fragment,
 	Suspense,
+	memo,
 	__SECRET_INTERNAL_NO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 

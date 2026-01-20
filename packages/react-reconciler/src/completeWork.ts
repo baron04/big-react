@@ -14,7 +14,8 @@ import {
 	HostRoot,
 	HostText,
 	SuspenseComponent,
-	OffscreenComponent
+	OffscreenComponent,
+	MemoComponent
 } from './workTags';
 import { NoFlags, Ref, Update, Visibility } from './fiberFlags';
 import { popProvider } from './fiberContext';
@@ -78,6 +79,7 @@ export const completeWork = (wip: FiberNode) => {
 		case FunctionComponent:
 		case Fragment:
 		case OffscreenComponent:
+		case MemoComponent:
 			bubbleProperties(wip);
 			return null;
 		case ContextProvider: {
