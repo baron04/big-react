@@ -14,6 +14,7 @@ import {
 	HostComponent,
 	HostRoot,
 	HostText,
+	MemoComponent,
 	OffscreenComponent,
 	SuspenseComponent
 } from './workTags';
@@ -33,6 +34,7 @@ import {
 } from './fiberFlags';
 import { pushProvider } from './fiberContext';
 import { pushSuspenseHandler } from './suspenseContext';
+import { shallowEqual } from 'shared/shallowEqual';
 
 // 是否能命中 bailout
 let didReceiveUpdate = false;
@@ -72,7 +74,7 @@ function bailoutOnAlreadyFinishedWork(wip: FiberNode, renderLane: Lane) {
 }
 
 // 递归中的递阶段
-export function beginWork(wip: FiberNode, renderLane: Lane) {
+export function beginWork(wip: FiberNode, renderLane: Lane): FiberNode | null {
 	// bailout 策略
 	// return 复用的结果
 	didReceiveUpdate = false;
@@ -120,7 +122,7 @@ export function beginWork(wip: FiberNode, renderLane: Lane) {
 		case HostComponent:
 			return updateHostComponent(wip);
 		case FunctionComponent:
-			return updateFunctionComponent(wip, renderLane);
+			return updateFunctionComponent(wip, wip.type, renderLane);
 		case HostText:
 			return null;
 		case Fragment:
@@ -131,6 +133,8 @@ export function beginWork(wip: FiberNode, renderLane: Lane) {
 			return updateSuspenseComponent(wip);
 		case OffscreenComponent:
 			return updateOffscreenComponent(wip);
+		case MemoComponent:
+			return updateMemoComponent(wip, renderLane);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -174,9 +178,13 @@ function updateHostComponent(wip: FiberNode) {
 	return wip.child;
 }
 
-function updateFunctionComponent(wip: FiberNode, renderLane: Lane) {
+function updateFunctionComponent(
+	wip: FiberNode,
+	Component: FiberNode['type'],
+	renderLane: Lane
+) {
 	// render
-	const nextChildren = renderWithHooks(wip, renderLane);
+	const nextChildren = renderWithHooks(wip, Component, renderLane);
 
 	const current = wip.alternate;
 	if (current !== null && !didReceiveUpdate) {
@@ -256,6 +264,35 @@ function updateOffscreenComponent(wip: FiberNode) {
 	const nextChildren = nextProps.children;
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
+}
+
+function updateMemoComponent(wip: FiberNode, renderLane: Lane) {
+	// bailout 四要素
+	// props 浅比较
+	const current = wip.alternate;
+	const nextProps = wip.pendingProps;
+	const Component = wip.type;
+
+	if (current !== null) {
+		const prevProps = current.memoizedProps;
+
+		// 浅比较 props
+		let compare = Component.compare;
+		compare = compare !== null ? compare : shallowEqual;
+		if (compare(prevProps, nextProps) && current.ref === wip.ref) {
+			didReceiveUpdate = false;
+			wip.pendingProps = prevProps;
+
+			// state context
+			if (!checkScheduledUpdateOrContext(current, renderLane)) {
+				// 满足四要素
+				wip.lanes = current.lanes;
+				return bailoutOnAlreadyFinishedWork(wip, renderLane);
+			}
+		}
+	}
+
+	return updateFunctionComponent(wip, Component.type, renderLane);
 }
 
 function reconcileChildren(wip: FiberNode, children?: ReactElement) {
