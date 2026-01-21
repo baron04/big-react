@@ -6,7 +6,9 @@ import {
 	useTransition,
 	useRef,
 	useContext,
-	use
+	use,
+	useCallback,
+	useMemo
 } from './src/hooks';
 import { memo } from './src/memo';
 
@@ -35,6 +37,8 @@ export {
 	Fragment,
 	Suspense,
 	memo,
+	useCallback,
+	useMemo,
 	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 
@@ -52,6 +56,8 @@ const React = {
 	Fragment,
 	Suspense,
 	memo,
+	useCallback,
+	useMemo,
 	__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
 };
 

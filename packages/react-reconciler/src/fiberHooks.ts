@@ -97,7 +97,9 @@ const hooksDispatcherOnMount: Dispatcher = {
 	useTransition: mountTransition,
 	useRef: mountRef,
 	useContext: readContext,
-	use
+	use,
+	useCallback: mountCallback,
+	useMemo: mountMemo
 };
 
 const hooksDispatcherOnUpdate: Dispatcher = {
@@ -106,7 +108,9 @@ const hooksDispatcherOnUpdate: Dispatcher = {
 	useTransition: updateTransition,
 	useRef: updateRef,
 	useContext: readContext,
-	use
+	use,
+	useCallback: updateCallback,
+	useMemo: updateMemo
 };
 
 function mountState<State>(
@@ -479,4 +483,52 @@ export function bailoutHook(wip: FiberNode, renderLane: Lane) {
 	wip.flags &= ~PassiveEffect;
 
 	current.lanes = removeLanes(current.lanes, renderLane);
+}
+
+export function mountCallback<T>(callback: T, deps?: DependencyList): T {
+	const hook = mountWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	hook.memoizedState = [callback, nextDeps];
+	return callback;
+}
+
+export function updateCallback<T>(callback: T, deps?: DependencyList): T {
+	const hook = updateWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	const prevState = hook.memoizedState;
+
+	if (nextDeps !== null) {
+		const prevDeps = prevState[1];
+		if (areHookInputsEqual(prevDeps, nextDeps)) {
+			return prevState[0];
+		}
+	}
+
+	hook.memoizedState = [callback, nextDeps];
+	return callback;
+}
+
+export function mountMemo<T>(nextCreate: () => T, deps?: DependencyList): T {
+	const hook = mountWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	const nextValue = nextCreate();
+	hook.memoizedState = [nextValue, nextDeps];
+	return nextValue;
+}
+
+export function updateMemo<T>(nextCreate: () => T, deps?: DependencyList): T {
+	const hook = updateWorkInProgressHook();
+	const nextDeps = deps === undefined ? null : deps;
+	const prevState = hook.memoizedState;
+
+	if (nextDeps !== null) {
+		const prevDeps = prevState[1];
+		if (areHookInputsEqual(prevDeps, nextDeps)) {
+			return prevState[0];
+		}
+	}
+
+	const nextValue = nextCreate();
+	hook.memoizedState = [nextValue, nextDeps];
+	return nextValue;
 }

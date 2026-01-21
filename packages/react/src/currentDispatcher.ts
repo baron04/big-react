@@ -11,6 +11,8 @@ export interface Dispatcher {
 	useRef: <T>(initialValue: T) => { current: T };
 	useContext: <T>(context: ReactContext<T>) => T;
 	use: <T>(usable: Usable<T>) => T;
+	useCallback: <T>(callback: T, deps?: DependencyList) => T;
+	useMemo: <T>(nextCreate: () => T, deps?: DependencyList) => T;
 }
 
 export type Dispatch<State> = (action: Action<State>) => void;
