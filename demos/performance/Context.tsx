@@ -3,13 +3,13 @@ import { useState, useContext, createContext, memo } from 'react';
 const ctx = createContext(0);
 
 export default function App() {
-	const [num, update] = useState(0);
+	const [num, setNum] = useState(0);
 	console.log('App render ', num);
 	return (
 		<ctx.Provider value={num}>
 			<div
 				onClick={() => {
-					update(1);
+					setNum(num + 1);
 				}}
 			>
 				<Cpn />
@@ -18,7 +18,7 @@ export default function App() {
 	);
 }
 
-const Cpn = memo(function () {
+const Cpn = memo(function Cpn() {
 	console.log('Cpn render');
 	return (
 		<div>
