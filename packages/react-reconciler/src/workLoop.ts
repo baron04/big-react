@@ -75,6 +75,12 @@ function prepareFreshStack(root: FiberRootNode, lane: Lane) {
 export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
 	// TODO 调度功能
 	const root = markUpdateLaneFromFiberToRoot(fiber, lane);
+	if (root === null) {
+		if (__DEV__) {
+			console.warn('scheduleUpdateOnFiber: 无法找到 FiberRootNode');
+		}
+		return;
+	}
 	markRootUpdated(root, lane);
 	ensureRootIsScheduled(root);
 }

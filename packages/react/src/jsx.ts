@@ -75,22 +75,24 @@ export const createElement = (
 	let ref: Ref = null;
 	const props: Props = {};
 
-	for (const prop in config) {
-		const val = config[prop];
-		if (prop === 'key') {
-			if (val !== undefined) {
-				key = '' + val;
+	if (config !== null && config !== undefined) {
+		for (const prop in config) {
+			const val = config[prop];
+			if (prop === 'key') {
+				if (val !== undefined) {
+					key = '' + val;
+				}
+				continue;
 			}
-			continue;
-		}
-		if (prop === 'ref') {
-			if (val !== undefined) {
-				ref = val;
+			if (prop === 'ref') {
+				if (val !== undefined) {
+					ref = val;
+				}
+				continue;
 			}
-			continue;
-		}
-		if (Object.prototype.hasOwnProperty.call(config, prop)) {
-			props[prop] = val;
+			if (Object.prototype.hasOwnProperty.call(config, prop)) {
+				props[prop] = val;
+			}
 		}
 	}
 
