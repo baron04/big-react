@@ -9,7 +9,7 @@ export default defineConfig({
 	plugins: [
 		react(),
 		replace({
-			__DEV__: true,
+			__DEV__: process.env.NODE_ENV !== 'production',
 			preventAssignment: true
 		})
 	],

@@ -1,7 +1,58 @@
-'use strict';
+import JestReact from 'jest-react';
+import SchedulerMatchers from './schedulerTestMatchers.js';
 
-const JestReact = require('jest-react');
-const SchedulerMatchers = require('./schedulerTestMatchers');
+function normalizeJSX(node, inChildren = false) {
+	if (node === null || node === undefined) {
+		return node;
+	}
+
+	// In rendered output, numeric children are equivalent to text.
+	// Our noop renderer stringifies numeric text nodes (0 -> "0"), while JSX
+	// literals may keep them as numbers. Normalize only in children context.
+	if (typeof node === 'number') {
+		return inChildren ? String(node) : node;
+	}
+	if (typeof node === 'string') {
+		return node;
+	}
+	if (Array.isArray(node)) {
+		return node.map((c) => normalizeJSX(c, inChildren));
+	}
+	// React elements are plain objects with `$$typeof`.
+	if (
+		typeof node === 'object' &&
+		node.$$typeof !== null &&
+		node.$$typeof !== undefined
+	) {
+		const { $$typeof, type, key, ref, props } = node;
+		const normalizedProps = {};
+		if (props !== null && props !== undefined && typeof props === 'object') {
+			for (const propName in props) {
+				if (!Object.prototype.hasOwnProperty.call(props, propName)) continue;
+				const value = props[propName];
+				// Event handlers/functions are not part of rendered output shape.
+				if (typeof value === 'function') continue;
+				normalizedProps[propName] = normalizeJSX(
+					value,
+					// Treat children as rendered text context.
+					propName === 'children'
+				);
+			}
+		}
+		// Strip dev-only/internal fields like _owner/_store/_self/_source.
+		return { $$typeof, type, key, ref, props: normalizedProps };
+	}
+	// For other objects (e.g. style), best-effort deep normalize.
+	if (typeof node === 'object') {
+		const out = {};
+		for (const k in node) {
+			if (!Object.prototype.hasOwnProperty.call(node, k)) continue;
+			out[k] = normalizeJSX(node[k], false);
+		}
+		return out;
+	}
+	return node;
+}
 
 function captureAssertion(fn) {
 	// Trick to use a Jest matcher inside another Jest matcher. `fn` contains an
@@ -34,13 +85,15 @@ function toMatchRenderedOutput(ReactNoop, expectedJSX) {
 		const Scheduler = ReactNoop._Scheduler;
 		assertYieldsWereCleared(Scheduler);
 		return captureAssertion(() => {
-			expect(ReactNoop.getChildrenAsJSX()).toEqual(expectedJSX);
+			expect(normalizeJSX(ReactNoop.getChildrenAsJSX())).toEqual(
+				normalizeJSX(expectedJSX)
+			);
 		});
 	}
 	return JestReact.unstable_toMatchRenderedOutput(ReactNoop, expectedJSX);
 }
 
-module.exports = {
+export default {
 	...SchedulerMatchers,
 	toMatchRenderedOutput
 };

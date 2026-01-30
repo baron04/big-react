@@ -148,11 +148,12 @@ function dispatchSetState<State>(
 
 	// eager 策略
 	const current = fiber.alternate;
+
 	if (
 		fiber.lanes === NoLanes &&
 		(current === null || current.lanes === NoLanes)
 	) {
-		// 当前产生的 update 是这个 fiber 的第一个 update
+		// 当前产生的 update 是这个 fiber 的第一个 update，且没有其他 pending update
 		// 1. 更新前的状态  2. 计算状态的方法
 		const currentState = updateQueue.lastRenderedState;
 		const eagerState = basicStateReducer(currentState, action);
@@ -429,11 +430,12 @@ function startTransition(setPending: Dispatch<boolean>, callback: () => void) {
 	setPending(true);
 	const prevTransition = currentBatchConfig.transition;
 	currentBatchConfig.transition = 1;
-
-	callback();
-	setPending(false);
-
-	currentBatchConfig.transition = prevTransition;
+	try {
+		callback();
+	} finally {
+		setPending(false);
+		currentBatchConfig.transition = prevTransition;
+	}
 }
 
 function mountRef<T>(initialValue: T): { current: T } {

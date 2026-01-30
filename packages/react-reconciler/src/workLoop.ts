@@ -73,62 +73,74 @@ function prepareFreshStack(root: FiberRootNode, lane: Lane) {
 }
 
 export function scheduleUpdateOnFiber(fiber: FiberNode, lane: Lane) {
-	// TODO 调度功能
 	const root = markUpdateLaneFromFiberToRoot(fiber, lane);
+	if (root === null) {
+		if (__DEV__) {
+			console.warn('scheduleUpdateOnFiber: 无法找到 FiberRootNode');
+		}
+		return;
+	}
 	markRootUpdated(root, lane);
 	ensureRootIsScheduled(root);
 }
 
 // schedule 阶段入口
 export function ensureRootIsScheduled(root: FiberRootNode) {
-	const updateLane = getNextLane(root);
-	const existingCallback = root.callbackNode;
+	/**
+	 * 调度模型（简化版）：
+	 *
+	 * - 微任务（microtask）
+	 *   - SyncLane：通过 `scheduleSyncCallback` 收集同步回调，然后使用 `scheduleMicroTask(flushSyncCallbacks)`
+	 *     在微任务中统一 flush（不走 Scheduler 的宏任务队列）。
+	 *
+	 * - 宏任务（macrotask）
+	 *   - 非 SyncLane 且可调度的 lane（含 TransitionLane）：通过 `scheduler.unstable_scheduleCallback(...)` 调度
+	 *     `performConcurrentWorkOnRoot`（由 Scheduler 驱动执行，可被 time-slicing/yield）。与官方 React 一致。
+	 */
+	const nextLane = getNextLane(root);
+	const existingCallbackNode = root.callbackNode;
+	const existingCallbackPriority = root.callbackPriority;
 
-	if (updateLane === NoLane) {
-		if (existingCallback !== null) {
-			unstable_cancelCallback(existingCallback);
+	// 1) 没有待处理更新：取消已存在的调度
+	if (nextLane === NoLane) {
+		if (existingCallbackNode !== null) {
+			// 取消已有的 Scheduler 宏任务（如果存在）
+			unstable_cancelCallback(existingCallbackNode);
 		}
 		root.callbackNode = null;
 		root.callbackPriority = NoLane;
 		return;
 	}
 
-	const curPriority = updateLane;
-	const prevPriority = root.callbackPriority;
-
-	if (curPriority === prevPriority) {
-		// 不需要调度
+	// 2) 调度优先级不变：复用已有调度
+	if (existingCallbackPriority === nextLane) {
 		return;
 	}
 
-	if (existingCallback !== null) {
-		unstable_cancelCallback(existingCallback);
+	// 3) 调度优先级变化：取消旧的调度（如果有）
+	if (existingCallbackNode !== null) {
+		// 取消旧的 Scheduler 宏任务（如果存在）
+		unstable_cancelCallback(existingCallbackNode);
 	}
 
-	let newCallbackNode: CallbackNode | null = null;
-
-	if (updateLane === SyncLane) {
-		// 同步优先级 用微任务调度
-		// if (__DEV__) {
-		// 	console.log('在微任务中调度，优先级：', updateLane);
-		// }
+	// 4) SyncLane：通过微任务 flush sync callback（不走 Scheduler）
+	if (nextLane === SyncLane) {
 		scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
+		// 微任务：flush 由 `scheduleSyncCallback` 收集的同步任务
 		scheduleMicroTask(flushSyncCallbacks);
-	} else {
-		// 其它优先级 用宏任务调度
-		// if (__DEV__) {
-		// 	console.log('在宏任务中调度，优先级：', updateLane);
-		// }
-		const schedulerPriority = lanesToSchedulerPriority(updateLane);
-		newCallbackNode = scheduleCallback(
-			schedulerPriority,
-			// @ts-ignore
-			performConcurrentWorkOnRoot.bind(null, root)
-		);
+		root.callbackNode = null;
+		root.callbackPriority = SyncLane;
+		return;
 	}
 
+	// 5) 其它 Lane：交给 Scheduler
+	const schedulerPriority = lanesToSchedulerPriority(nextLane);
+	const newCallbackNode: CallbackNode = scheduleCallback(
+		schedulerPriority,
+		performConcurrentWorkOnRoot.bind(null, root)
+	);
 	root.callbackNode = newCallbackNode;
-	root.callbackPriority = curPriority;
+	root.callbackPriority = nextLane;
 }
 
 export function markRootUpdated(root: FiberRootNode, lane: Lane) {

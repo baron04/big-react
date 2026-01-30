@@ -10,7 +10,7 @@ import {
 	WorkTag
 } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
-import { Container } from 'hostConfig';
+import type { Container } from 'hostConfig';
 import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 import { Effect } from './fiberHooks';
 import { CallbackNode } from 'scheduler';

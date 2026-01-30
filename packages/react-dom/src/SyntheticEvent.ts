@@ -1,15 +1,12 @@
-import { Container } from 'hostConfig';
+import { Container, DOMElement, elementPropsKey } from 'hostConfig';
 import {
 	unstable_ImmediatePriority,
 	unstable_NormalPriority,
 	unstable_runWithPriority,
 	unstable_UserBlockingPriority
 } from 'scheduler';
-import { Props } from 'shared/ReactTypes';
 
-export const elementPropsKey = '__props';
-
-const validEventTypeList = ['click'];
+const allNativeEvents = ['click'];
 
 type EventCallback = (e: Event) => void;
 
@@ -22,26 +19,11 @@ interface Paths {
 	bubble: EventCallback[];
 }
 
-export interface DOMElement extends Element {
-	[elementPropsKey]: Props;
-}
-
-export function updateFiberProps(node: DOMElement, props: Props) {
-	node[elementPropsKey] = props;
-}
-
-export function initEvent(container: Container, eventType: string) {
-	if (!validEventTypeList.includes(eventType)) {
-		console.warn(`当前不支持${eventType}事件`);
-		return;
-	}
-
-	if (__DEV__) {
-		console.log(`初始化事件: ${eventType}`);
-	}
-
-	container.addEventListener(eventType, (event) => {
-		dispatchEvent(container, eventType, event);
+export function listenToAllSupportedEvents(container: Container) {
+	allNativeEvents.forEach((eventType) => {
+		container.addEventListener(eventType, (event) => {
+			dispatchEvent(container, eventType, event);
+		});
 	});
 }
 
