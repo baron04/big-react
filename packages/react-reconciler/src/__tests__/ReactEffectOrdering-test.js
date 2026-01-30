@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* @typescript-eslint/no-require-imports */
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -9,9 +8,6 @@
  * @emails react-core
  * @jest-environment node
  */
-
-/* eslint-disable no-func-assign */
-
 'use strict';
 
 let React;
@@ -23,7 +19,6 @@ let useEffect;
 describe('ReactHooksWithNoopRenderer', () => {
 	beforeEach(() => {
 		jest.resetModules();
-		jest.useFakeTimers();
 
 		React = require('react');
 		act = require('jest-react').act;

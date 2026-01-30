@@ -1,3 +1,5 @@
+import reactTestMatchers from './reactTestMatchers.js';
+
 expect.extend({
-	...require('./reactTestMatchers')
+	...reactTestMatchers
 });

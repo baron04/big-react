@@ -10,7 +10,7 @@ import {
 	WorkTag
 } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
-import { Container } from 'hostConfig';
+import type { Container } from 'hostConfig';
 import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 import { Effect } from './fiberHooks';
 import { CallbackNode } from 'scheduler';
@@ -160,6 +160,10 @@ export const createWorkInProgress = (
 	wip.memoizedProps = current.memoizedProps;
 	wip.memoizedState = current.memoizedState;
 	wip.ref = current.ref;
+
+	// bailout 时子 fiber 由 cloneChildFiber 经此生成，index 不复制会残留
+	// alternate 上的陈旧值，导致下次 diff 漏打 Placement 标记、列表重排失效
+	wip.index = current.index;
 
 	wip.lanes = current.lanes;
 	wip.childLanes = current.childLanes;

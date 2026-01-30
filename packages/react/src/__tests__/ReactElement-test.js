@@ -63,7 +63,9 @@ describe('ReactElement', () => {
 		expect(element.props).toEqual({});
 	});
 
-	it('returns an immutable element', () => {
+	// 与上游 React 的差异：官方在 DEV 下会 Object.freeze element，赋值抛错。
+	// 若将来实现了 freeze，应同步修改这条断言，而不是当作回归。
+	it('does not freeze the element (deviation from React DEV)', () => {
 		const element = React.createElement(ComponentFC);
 		expect(() => (element.type = 'div')).not.toThrow();
 	});

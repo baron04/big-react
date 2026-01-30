@@ -25,29 +25,31 @@ const ReactElement = function (
 // 在 传统转换（Classic Runtime）中，React.createElement 的第三个参数及其后的参数都是 子元素（children）
 export const createElement = (
 	type: Type,
-	config: Props,
+	config: Record<string, any> | null,
 	...maybeChildren: unknown[]
 ) => {
 	let key: Key | null = null;
 	let ref: Ref = null;
 	const props: Props = {};
 
-	for (const prop in config) {
-		const val = config[prop];
-		if (prop === 'key') {
-			if (val !== undefined) {
-				key = '' + val;
+	if (config !== null && config !== undefined) {
+		for (const prop in config) {
+			const val = config[prop];
+			if (prop === 'key') {
+				if (val !== undefined) {
+					key = '' + val;
+				}
+				continue;
 			}
-			continue;
-		}
-		if (prop === 'ref') {
-			if (val !== undefined) {
-				ref = val;
+			if (prop === 'ref') {
+				if (val !== undefined) {
+					ref = val;
+				}
+				continue;
 			}
-			continue;
-		}
-		if (Object.prototype.hasOwnProperty.call(config, prop)) {
-			props[prop] = val;
+			if (Object.prototype.hasOwnProperty.call(config, prop)) {
+				props[prop] = val;
+			}
 		}
 	}
 

@@ -4,14 +4,14 @@ import {
 } from 'react-reconciler/src/fiberReconciler';
 import { Container } from './hostConfig';
 import { ReactElement } from 'shared/ReactTypes';
-import { initEvent } from './SyntheticEvent';
+import { listenToAllSupportedEvents } from './SyntheticEvent';
 
 export function createRoot(container: Container) {
+	listenToAllSupportedEvents(container);
 	const root = createContainer(container);
 
 	return {
 		render(element: ReactElement) {
-			initEvent(container, 'click');
 			return updateContainer(element, root);
 		}
 	};

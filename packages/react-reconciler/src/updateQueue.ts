@@ -127,9 +127,19 @@ export const processUpdateQueue = <State>(
 				}
 				const action = pending.action;
 				if (pending.hasEagerState) {
-					newState = pending.eagerState!;
+					// eagerState 是基于 lastRenderedState 计算的
+					// 但如果有多个 update，后续的 update 应该基于前一个 update 的结果
+					// 所以如果 newState 不等于 baseState，说明已经有其他 update 处理过了
+					// 此时应该基于 newState 重新计算，而不是直接使用 eagerState
+					if (Object.is(newState, baseState)) {
+						// 这是第一个 update，可以使用 eagerState
+						newState = pending.eagerState!;
+					} else {
+						// 这不是第一个 update，需要基于 newState 重新计算
+						newState = basicStateReducer(newState, action);
+					}
 				} else {
-					newState = basicStateReducer(baseState, action);
+					newState = basicStateReducer(newState, action);
 				}
 			}
 			pending = pending.next!;

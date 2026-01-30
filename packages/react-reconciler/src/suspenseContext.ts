@@ -3,7 +3,9 @@ import { FiberNode } from './fiber';
 const suspenseHandlerStack: FiberNode[] = [];
 
 export function getSuspenseHandler() {
-	return suspenseHandlerStack[suspenseHandlerStack.length - 1];
+	return suspenseHandlerStack.length > 0
+		? suspenseHandlerStack[suspenseHandlerStack.length - 1]
+		: null;
 }
 
 export function pushSuspenseHandler(handler: FiberNode) {

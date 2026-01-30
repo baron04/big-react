@@ -411,10 +411,10 @@ function insertOrAppendPlacementNodeIntoContainer(
 
 	const child = finishedWork.child;
 	if (child !== null) {
-		insertOrAppendPlacementNodeIntoContainer(child, hostParent);
+		insertOrAppendPlacementNodeIntoContainer(child, hostParent, before);
 		let sibling = child.sibling;
 		while (sibling !== null) {
-			insertOrAppendPlacementNodeIntoContainer(sibling, hostParent);
+			insertOrAppendPlacementNodeIntoContainer(sibling, hostParent, before);
 			sibling = sibling.sibling;
 		}
 	}
@@ -432,7 +432,7 @@ function commitPassiveEffect(
 	) {
 		return;
 	}
-	const updateQueue = fiber.updateQueue as FCUpdateQueue<any>;
+	const updateQueue = fiber.updateQueue as FCUpdateQueue<unknown>;
 	if (updateQueue !== null) {
 		if (updateQueue.lastEffect === null && __DEV__) {
 			console.error('当 FC 存在 PassiveEffect flag 时，不应该不存在 effect');
