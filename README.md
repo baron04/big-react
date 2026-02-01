@@ -66,6 +66,10 @@
 - 最终版本代码 Suspense demo 不符合预期，不会从 fallback 切换 primary，已修复
   - 卡颂版本在「22-6 实现unwind流程」写的 attachPingListener 存在 bug
   - 卡颂版本在「23-3 实现bailout策略(上)」写的 markUpdateLaneFromFiberToRoot 存在 bug
+- demo 优化
+  - 把 demo 改成 monorepo 的一个package，有独立的 npm scripts。更方便切换不同 demo，不用改代码，更方便同时运行多个 demo
+  - 通过 JSX 类型声明，解决了编辑器内的 jsx 报错，不用安装 `@types/react`。安装了 `@types/react` 不方便从 demo 跳转到源码
+  - 支持切换官方 React 和自制 React，只需要修改 `vite.config.js` 中的配置，这样更方便对比测试官方 React 和自制 React 的表现
 
 ### AI 修复的问题
 

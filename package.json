@@ -5,7 +5,7 @@
   "scripts": {
     "build:dev": "rimraf dist && rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
     "build:prod": "rimraf dist && NODE_ENV=production rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
-    "demo": "vite serve demos/performance --config scripts/vite/vite.config.js --force",
+    "demo": "pnpm --filter demos dev",
     "test": "jest --config scripts/jest/jest.config.js",
     "test:build": "pnpm -s build:prod && pnpm -s test",
     "lint-staged": "npx lint-staged",
@@ -39,15 +39,12 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-react": "^0.14.2",
     "prettier": "^3.3.3",
-    "react": "workspace:*",
-    "react-dom": "workspace:*",
     "rimraf": "^6.0.1",
     "rollup": "^4.24.0",
     "rollup-plugin-generate-package-json": "^3.2.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "5.5.4",
-    "typescript-eslint": "^8.8.1",
-    "vite": "^5.4.8"
+    "typescript-eslint": "^8.8.1"
   },
   "dependencies": {
     "scheduler": "^0.23.2"

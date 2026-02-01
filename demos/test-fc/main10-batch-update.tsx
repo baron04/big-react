@@ -23,4 +23,5 @@ function Child({ children }: any) {
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<App />);
+// @ts-ignore
 window.root = root;
