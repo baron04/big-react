@@ -1,4 +1,3 @@
-import * as React from 'react';
 import ReactNoopRenderer from 'react-noop-renderer';
 // import { createRoot } from 'react-noop-renderer';
 
@@ -17,5 +16,6 @@ function App() {
 
 const root = ReactNoopRenderer.createRoot();
 root.render(<App />);
+// @ts-ignore
 window.root = root;
-// root.getChildren()
+// 在浏览器控制台打印 root.getChildren()

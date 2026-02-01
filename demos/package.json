@@ -1,0 +1,26 @@
+{
+  "name": "demos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Monorepo 调试工程，可切换官方 React / 自制 React",
+  "scripts": {
+    "dev": "vite serve test-fc --config vite.config.js",
+    "dev:transition": "vite serve transition --config vite.config.js",
+    "dev:ref": "vite serve ref --config vite.config.js",
+    "dev:context": "vite serve context --config vite.config.js",
+    "dev:suspense": "vite serve suspense-use --config vite.config.js",
+    "dev:performance": "vite serve performance --config vite.config.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-noop-renderer": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "@rollup/plugin-replace": "^6.0.1",
+    "typescript": "5.5.4",
+    "vite": "^5.4.8"
+  }
+}

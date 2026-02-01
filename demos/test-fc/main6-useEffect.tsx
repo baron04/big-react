@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 
 function Child() {
@@ -11,7 +10,7 @@ function Child() {
 }
 
 function App() {
-	const [num, setNum] = React.useState(0);
+	const [num, setNum] = useState(0);
 
 	useEffect(() => {
 		console.log('App mount');

@@ -70,6 +70,10 @@
 - processUpdateQueue 状态计算错误：修复了在计算新状态时应该使用 `newState` 而不是 `baseState` 的问题
 - markUpdateLaneFromFiberToRoot 返回值处理：添加了 null 检查，避免在找不到 FiberRootNode 时继续执行导致错误
 - TransitionLane 错误地映射为 IdlePriority（在 React 18/19 源码中，TransitionLane 会映射为 NormalPriority，而不是 IdlePriority）
+- demo 优化
+  - 把 demo 改成 monorepo 的一个package，有独立的 npm scripts。更方便切换不同 demo，不用改代码，更方便同时运行多个 demo
+  - 通过 JSX 类型声明，解决了编辑器内的 jsx 报错，不用安装 `@types/react`。安装了 `@types/react` 不方便从 demo 跳转到源码
+  - 支持切换官方 React 和自制 React，只需要修改 `vite.config.js` 中的配置，这样更方便对比测试官方 React 和自制 React 的表现
 
 ## 与 React 18 的差异（本实现基于 React 18）
 
