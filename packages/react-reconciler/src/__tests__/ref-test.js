@@ -65,4 +65,28 @@ describe('Ref', () => {
 		// ref.current 的修改应该保持
 		expect(ref.current).toBe(10);
 	});
+
+	test('host ref is detached before a new ref is attached', async () => {
+		const firstRef = { current: null };
+		const secondRef = { current: null };
+
+		function Component({ hostRef }) {
+			return <div ref={hostRef}>Hello</div>;
+		}
+
+		const root = ReactNoop.createRoot();
+		await act(async () => {
+			root.render(<Component hostRef={firstRef} />);
+		});
+
+		expect(firstRef.current).not.toBe(null);
+		expect(secondRef.current).toBe(null);
+
+		await act(async () => {
+			root.render(<Component hostRef={secondRef} />);
+		});
+
+		expect(firstRef.current).toBe(null);
+		expect(secondRef.current).not.toBe(null);
+	});
 });

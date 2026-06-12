@@ -14,10 +14,22 @@ export function updateFiberProps(node: DOMElement, props: Props) {
 }
 
 // 仅将 className、style 应用到 DOM，其余仅存于 fiberProps（事件委托等）。见 README「与 React 18 的差异」
-function applyPropsToDOM(dom: HTMLElement, props: Props) {
+function applyPropsToDOM(
+	dom: HTMLElement,
+	props: Props,
+	prevProps: Props = {}
+) {
+	const prevStyle = prevProps.style || {};
+	const nextStyle = props.style || {};
+	for (const styleName in prevStyle) {
+		if (!(styleName in nextStyle)) {
+			dom.style[styleName as any] = '';
+		}
+	}
+
 	for (const prop in props) {
 		if (prop === 'style') {
-			Object.assign(dom.style, props.style);
+			Object.assign(dom.style, nextStyle);
 		} else if (prop === 'className') {
 			dom.setAttribute('class', props.className ?? '');
 		}
@@ -56,8 +68,9 @@ export function commitUpdate(fiber: FiberNode) {
 		}
 		case HostComponent: {
 			const dom = fiber.stateNode as DOMElement;
+			const oldProps = fiber.alternate?.memoizedProps || {};
 			const props = fiber.memoizedProps || {};
-			applyPropsToDOM(dom as unknown as HTMLElement, props);
+			applyPropsToDOM(dom as unknown as HTMLElement, props, oldProps);
 			updateFiberProps(dom, props);
 			return;
 		}

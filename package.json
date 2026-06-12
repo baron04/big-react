@@ -6,8 +6,9 @@
     "build:dev": "rimraf dist && rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
     "build:prod": "rimraf dist && NODE_ENV=production rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js",
     "demo": "pnpm --filter demos dev",
-    "test": "jest --config scripts/jest/jest.config.js",
-    "test:build": "pnpm -s build:prod && pnpm -s test",
+    "test": "pnpm -s build:prod && jest --config scripts/jest/jest.config.js --silent",
+    "test:dist": "jest --config scripts/jest/jest.config.js",
+    "test:build": "pnpm -s test",
     "lint-staged": "npx lint-staged",
     "prepare": "husky",
     "typecheck": "tsc --noEmit"

@@ -82,6 +82,10 @@ export function schedulerPriorityToLane(schedulerPriority: number): Lane {
 		return DefaultLane;
 	}
 
+	if (schedulerPriority === unstable_IdlePriority) {
+		return IdleLane;
+	}
+
 	return NoLane;
 }
 

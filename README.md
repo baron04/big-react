@@ -36,7 +36,7 @@
 
 ### 已实现功能
 
-- Fiber 架构和双缓冲机制
+- Fiber 架构和双缓存机制
 - JSX 转换和 ReactElement 创建
 - 函数组件渲染
 - useState、useEffect、useContext、useRef、useMemo、useCallback、useTransition 等 Hooks
@@ -75,7 +75,6 @@
 
 - 1. **createElement 中 config 为 undefined 的处理**：添加了 null/undefined 检查，避免遍历 undefined 对象
 - 2. **processUpdateQueue 状态计算错误**：修复了在计算新状态时应该使用 `newState` 而不是 `baseState` 的问题
-  - [验证-updateQueue-修改](./docs/validate-updateQueue-modify.md)
 - 3. **markUpdateLaneFromFiberToRoot 返回值处理**：添加了 null 检查，避免在找不到 FiberRootNode 时继续执行导致错误
 - 4. TransitionLane 错误地映射为 IdlePriority
 
@@ -100,12 +99,12 @@ TransitionLane     →     DefaultEventPriority     →     NormalSchedulerPrior
    - 事件委托机制较为简单。实现上对 click 已做捕获与冒泡（`SyntheticEvent.ts` 中 `collectPaths` → `triggerEventFlow(capture)` 再 bubble）
 
 3. **Suspense 与高级组件**
-   - Suspense 已实现（配合 use/thenable），但缺少部分高级特性，见 [suspense-implementation.md](./docs/suspense-implementation.md)
+   - Suspense 已实现（配合 use/thenable），但缺少部分高级特性，见 [讲义第 22 章](./docs/lecture-notes/22.md)
    - `React.lazy` 未实现
    - `SuspenseList`、`StrictMode` 未实现
 
 4. **Context 优化**
-   - 实现了基础的 Context，但缺少性能优化（如 Context 选择器），大 Context 下所有消费者都会更新，见 [context-implementation.md](./docs/context-implementation.md)
+   - 实现了基础的 Context，但缺少性能优化（如 Context 选择器），大 Context 下所 有消费者都会更新，见 [讲义第 21 章](./docs/lecture-notes/21.md)
 
 5. **错误处理与恢复**
    - 未实现错误边界，组件 throw 的普通 Error 未被捕获（`throwException` 仅处理 thenable/Suspense），见 [error-boundary-implementation.md](./docs/error-boundary-implementation.md)
@@ -139,8 +138,7 @@ TransitionLane     →     DefaultEventPriority     →     NormalSchedulerPrior
 
 12. **实现质量与工程化**
     - `markUpdateLaneFromFiberToRoot` 返回 null 时，调用者没有统一处理机制
-    - 部分 TODO 注释标记的功能未实现；单元测试覆盖不完整（已有关键流程用例：useState、useEffect、Context、bailout、reconciliation、useTransition、批处理、useMemo/useCallback、ref、Fragment 等）
-    - `FiberNode.type`/`stateNode` 为 `any`（`fiber.ts`），可收窄；HostRoot 的 `updateQueue` 类型可在一处统一；构建与库模式、bundle 分析等未在 README 展开
+    - 其余（类型收窄、测试覆盖、注释与文档等）统一维护在下方「优化项（TODOs）」一节
 
 13. **调度器与 Reconciliation 实现细节**
     - 调度器：SyncLane 通过微任务 + `performSyncWorkOnRoot` 同步执行；非 SyncLane 已使用 `scheduler` 包与 `performConcurrentWorkOnRoot`，支持时间切片（`unstable_shouldYield`）与可中断渲染。边缘逻辑：高优先级打断低优先级可能未完全覆盖；调度入口未使用 `requestIdleCallback`/`MessageChannel`（本项目用 `scheduleMicroTask` + Scheduler）
@@ -272,7 +270,10 @@ package.json
 
 ### 3. jest 单元测试
 
-执行 `pnpm test` 命令
+测试通过 `dist/` 解析本项目的 `react`、`react-dom` 与 `react-noop-renderer`，因此需要先构建再测试。
+
+- 执行 `pnpm test`：先 `build:prod`，再运行 Jest（推荐）
+- 执行 `pnpm test:dist`：只测试当前已有的 `dist/` 产物，适合已经确认 dist 新鲜时快速调试
 
 ## 总结
 
@@ -288,6 +289,7 @@ package.json
 
 更多实现说明见 [docs](./docs/) 目录，如：
 
-- [context-implementation.md](./docs/context-implementation.md)
-- [suspense-implementation.md](./docs/suspense-implementation.md)
-- [useTransition-implementation.md](./docs/useTransition-implementation.md)
+- [lecture-notes](./docs/lecture-notes/)：按课程顺序讲解 big-react 的代码设计思路，覆盖实现、差距对比与思考题
+- [error-boundary-implementation.md](./docs/error-boundary-implementation.md)：错误边界设计
+- [large-list-optimization.md](./docs/large-list-optimization.md)：大列表性能优化
+- [react-source-interview-questions.md](./docs/react-source-interview-questions.md)：React 源码面试速成题库

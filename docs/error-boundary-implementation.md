@@ -81,7 +81,7 @@ completeWork / commit 阶段：对 DidCapture 的 ClassComponent 调用 instance
 
 ### 2.2 与 Suspense / Promise reject 的衔接
 
-- **thenable reject**：在 `attachPingListener` 的 onReject 中可调用统一入口 `handleSuspenseReject(root, error, lane, suspenseBoundary)`，其内同样 `findErrorBoundary(suspenseBoundary ?? workInProgress)`，找到则设 ShouldCapture + pendingError + scheduleUpdateOnFiber，与「组件 throw Error」路径一致；未找到则 handleUncaughtError 或向父级 Suspense 传播（见 suspense-implementation 文档第五节）。
+- **thenable reject**：在 `attachPingListener` 的 onReject 中可调用统一入口 `handleSuspenseReject(root, error, lane, suspenseBoundary)`，其内同样 `findErrorBoundary(suspenseBoundary ?? workInProgress)`，找到则设 ShouldCapture + pendingError + scheduleUpdateOnFiber，与「组件 throw Error」路径一致；未找到则 handleUncaughtError 或向父级 Suspense 传播（见 [讲义第 22 章](./lecture-notes/22.md)「Suspense 与错误边界的共同点和差异」一节）。
 - 本文档以「组件 throw Error」为主线；Promise reject 仅需在 attachPingListener 中把 onReject 接到上述统一入口即可。
 
 ---

@@ -126,4 +126,30 @@ describe('Priority Scheduling', () => {
 			</div>
 		);
 	});
+
+	test('idle priority updates are assigned to IdleLane and can commit', async () => {
+		let setCount;
+
+		function Component() {
+			const [count, updateCount] = useState(0);
+			setCount = updateCount;
+			return <div>{count}</div>;
+		}
+
+		const root = ReactNoop.createRoot();
+		await act(async () => {
+			root.render(<Component />);
+		});
+
+		await act(async () => {
+			Scheduler.unstable_runWithPriority(
+				Scheduler.unstable_IdlePriority,
+				() => {
+					setCount(1);
+				}
+			);
+		});
+
+		expect(root).toMatchRenderedOutput(<div>1</div>);
+	});
 });

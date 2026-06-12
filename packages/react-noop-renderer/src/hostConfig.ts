@@ -1,5 +1,5 @@
 import { FiberNode } from 'react-reconciler/src/fiber';
-import { HostText } from 'react-reconciler/src/workTags';
+import { HostComponent, HostText } from 'react-reconciler/src/workTags';
 import { Props } from 'shared/ReactTypes';
 
 export interface Container {
@@ -81,6 +81,10 @@ export function commitUpdate(fiber: FiberNode) {
 		case HostText: {
 			const text = fiber.memoizedProps?.content;
 			return commitTextUpdate(fiber.stateNode, text);
+		}
+		case HostComponent: {
+			fiber.stateNode.props = fiber.memoizedProps;
+			return;
 		}
 		default: {
 			if (__DEV__) {

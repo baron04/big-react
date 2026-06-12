@@ -161,4 +161,45 @@ describe('Bailout Strategy', () => {
 			</div>
 		);
 	});
+
+	test('bailout preserves sibling fibers when a nested sibling updates', async () => {
+		let setSecondCount;
+
+		function Child({ label }) {
+			const [count, setCount] = useState(0);
+			if (label === 'B') {
+				setSecondCount = setCount;
+			}
+			return (
+				<span>
+					{label}:{count}
+				</span>
+			);
+		}
+
+		function App() {
+			return (
+				<div>
+					<Child label="A" />
+					<Child label="B" />
+				</div>
+			);
+		}
+
+		const root = ReactNoop.createRoot();
+		await act(async () => {
+			root.render(<App />);
+		});
+
+		await act(async () => {
+			setSecondCount(1);
+		});
+
+		expect(root).toMatchRenderedOutput(
+			<div>
+				<span>A:0</span>
+				<span>B:1</span>
+			</div>
+		);
+	});
 });

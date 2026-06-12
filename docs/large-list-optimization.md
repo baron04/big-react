@@ -1,4 +1,4 @@
-# Mini React vs React 19：大型列表优化对比
+# big-react vs React 19：大型列表优化对比
 
 ## React 19 对大型列表的优化支持
 

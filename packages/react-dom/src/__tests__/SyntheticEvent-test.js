@@ -154,6 +154,30 @@ describe('SyntheticEvent', () => {
 		expect(logs).toEqual(['second']);
 	});
 
+	test('style updates remove properties that no longer exist', async () => {
+		function App({ style }) {
+			return <div style={style}>Box</div>;
+		}
+
+		const container = document.createElement('div');
+		const root = ReactDOMClient.createRoot(container);
+
+		await act(async () => {
+			root.render(<App style={{ color: 'red', display: 'block' }} />);
+		});
+
+		const div = container.querySelector('div');
+		expect(div.style.color).toBe('red');
+		expect(div.style.display).toBe('block');
+
+		await act(async () => {
+			root.render(<App style={{ color: 'blue' }} />);
+		});
+
+		expect(div.style.color).toBe('blue');
+		expect(div.style.display).toBe('');
+	});
+
 	test('initEvent registers DOM listener only once per container', async () => {
 		const container = document.createElement('div');
 		const addSpy = jest.spyOn(container, 'addEventListener');
