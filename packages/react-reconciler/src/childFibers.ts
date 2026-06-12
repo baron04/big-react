@@ -57,6 +57,7 @@ function childReconciler(shouldTrackEffects: boolean) {
 						}
 						// type 相同
 						const existing = useFiber(currentFiber, props);
+						existing.ref = element.ref;
 						existing.return = returnFiber;
 						// 当前节点可复用，标记剩下的节点删除
 						deleteRemainingChildren(returnFiber, currentFiber.sibling);
@@ -222,7 +223,9 @@ function childReconciler(shouldTrackEffects: boolean) {
 					if (before) {
 						if (before.type === element.type) {
 							existingChildren.delete(keyToUse);
-							return useFiber(before, element.props);
+							const existing = useFiber(before, element.props);
+							existing.ref = element.ref;
+							return existing;
 						}
 					}
 					return createFiberFromElement(element);
@@ -351,8 +354,8 @@ export function cloneChildFiber(wip: FiberNode) {
 	while (currentChild.sibling !== null) {
 		currentChild = currentChild.sibling;
 		newChild = newChild.sibling = createWorkInProgress(
-			newChild,
-			newChild.pendingProps
+			currentChild,
+			currentChild.pendingProps
 		);
 		newChild.return = wip;
 	}

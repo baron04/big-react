@@ -396,10 +396,10 @@ function updateEffect(create: EffectCallback, nextDeps?: DependencyList) {
 }
 
 function areHookInputsEqual(
-	prevDeps?: DependencyList,
-	nextDeps?: DependencyList
+	prevDeps?: DependencyList | null,
+	nextDeps?: DependencyList | null
 ) {
-	if (prevDeps === undefined || nextDeps === undefined) {
+	if (prevDeps == null || nextDeps == null) {
 		return false;
 	}
 	for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {

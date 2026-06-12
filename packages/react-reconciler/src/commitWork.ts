@@ -99,11 +99,12 @@ const commitMutationEffectsOnFiber = (
 		finishedWork.flags &= ~PassiveEffect;
 	}
 
-	// 这段代码应该没用
-	// 解绑 ref
-	// if ((flags & Ref) !== NoFlags && tag === HostComponent) {
-	// 	safelyDetachRef(finishedWork);
-	// }
+	if ((flags & Ref) !== NoFlags && tag === HostComponent) {
+		const current = finishedWork.alternate;
+		if (current !== null) {
+			safelyDetachRef(current);
+		}
+	}
 
 	if ((flags & Visibility) !== NoFlags && tag === OffscreenComponent) {
 		const isHidden = finishedWork.pendingProps.mode === 'hidden';
