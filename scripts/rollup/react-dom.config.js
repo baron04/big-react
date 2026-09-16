@@ -14,11 +14,11 @@ export default [
 		input: `${pkgPath}/${module}`,
 		output: [
 			{
-				file: `${pkgDistPath}/index.js`,
+				file: `${pkgDistPath}/index.cjs`,
 				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/index.esm.js`,
+				file: `${pkgDistPath}/index.js`,
 				format: 'es'
 			}
 		],
@@ -38,23 +38,24 @@ export default [
 					name,
 					description,
 					version,
+					type: 'module',
 					peerDependencies: {
 						react: version
 					},
-					main: 'index.js',
-					module: 'index.esm.js',
+					main: 'index.cjs',
+					module: 'index.js',
 					exports: {
 						'.': {
-							import: './index.esm.js',
-							require: './index.js'
+							import: './index.js',
+							require: './index.cjs'
 						},
 						'./client': {
-							import: './client.esm.js',
-							require: './client.js'
+							import: './client.js',
+							require: './client.cjs'
 						},
 						'./test-utils': {
-							import: './test-utils.esm.js',
-							require: './test-utils.js'
+							import: './test-utils.js',
+							require: './test-utils.cjs'
 						}
 					}
 				})
@@ -66,11 +67,11 @@ export default [
 		input: `${pkgPath}/client.ts`,
 		output: [
 			{
-				file: `${pkgDistPath}/client.js`,
+				file: `${pkgDistPath}/client.cjs`,
 				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/client.esm.js`,
+				file: `${pkgDistPath}/client.js`,
 				format: 'es'
 			}
 		],
@@ -90,11 +91,11 @@ export default [
 		input: `${pkgPath}/test-utils.ts`,
 		output: [
 			{
-				file: `${pkgDistPath}/test-utils.js`,
+				file: `${pkgDistPath}/test-utils.cjs`,
 				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/test-utils.esm.js`,
+				file: `${pkgDistPath}/test-utils.js`,
 				format: 'es'
 			}
 		],

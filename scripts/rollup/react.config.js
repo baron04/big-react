@@ -13,11 +13,11 @@ export default [
 		input: `${pkgPath}/${module}`,
 		output: [
 			{
-				file: `${pkgDistPath}/index.js`,
+				file: `${pkgDistPath}/index.cjs`,
 				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/index.esm.js`,
+				file: `${pkgDistPath}/index.js`,
 				format: 'es'
 			}
 		],
@@ -30,20 +30,21 @@ export default [
 					name,
 					description,
 					version,
-					main: 'index.js',
-					module: 'index.esm.js',
+					type: 'module',
+					main: 'index.cjs',
+					module: 'index.js',
 					exports: {
 						'.': {
-							import: './index.esm.js',
-							require: './index.js'
+							import: './index.js',
+							require: './index.cjs'
 						},
 						'./jsx-runtime': {
-							import: './jsx-runtime.esm.js',
-							require: './jsx-runtime.js'
+							import: './jsx-runtime.js',
+							require: './jsx-runtime.cjs'
 						},
 						'./jsx-dev-runtime': {
-							import: './jsx-dev-runtime.esm.js',
-							require: './jsx-dev-runtime.js'
+							import: './jsx-dev-runtime.js',
+							require: './jsx-dev-runtime.cjs'
 						}
 					}
 				})
@@ -56,22 +57,22 @@ export default [
 		output: [
 			// jsx-runtime
 			{
-				file: `${pkgDistPath}/jsx-runtime.js`,
+				file: `${pkgDistPath}/jsx-runtime.cjs`,
 				format: 'cjs'
 			},
 			// jsx-dev-runtime
 			{
-				file: `${pkgDistPath}/jsx-dev-runtime.js`,
+				file: `${pkgDistPath}/jsx-dev-runtime.cjs`,
 				format: 'cjs'
 			},
 			// esm jsx-runtime
 			{
-				file: `${pkgDistPath}/jsx-runtime.esm.js`,
+				file: `${pkgDistPath}/jsx-runtime.js`,
 				format: 'es'
 			},
 			// esm jsx-dev-runtime
 			{
-				file: `${pkgDistPath}/jsx-dev-runtime.esm.js`,
+				file: `${pkgDistPath}/jsx-dev-runtime.js`,
 				format: 'es'
 			}
 		],

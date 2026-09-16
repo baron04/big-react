@@ -16,11 +16,11 @@ export default [
 		input: `${pkgPath}/${module}`,
 		output: [
 			{
-				file: `${pkgDistPath}/index.js`,
+				file: `${pkgDistPath}/index.cjs`,
 				format: 'cjs'
 			},
 			{
-				file: `${pkgDistPath}/index.esm.js`,
+				file: `${pkgDistPath}/index.js`,
 				format: 'es'
 			}
 		],
@@ -51,15 +51,16 @@ export default [
 					name,
 					description,
 					version,
+					type: 'module',
 					peerDependencies: {
 						react: version
 					},
-					main: 'index.js',
-					module: 'index.esm.js',
+					main: 'index.cjs',
+					module: 'index.js',
 					exports: {
 						'.': {
-							import: './index.esm.js',
-							require: './index.js'
+							import: './index.js',
+							require: './index.cjs'
 						}
 					}
 				})
